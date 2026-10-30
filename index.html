@@ -1,0 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<title>Kashana</title>
+<style>
+:root{--bg:#faf7f2;--ink:#2b2a33;--mute:#8a8794;--line:#d4cec3}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden;overscroll-behavior:none}
+svg#c{position:fixed;inset:0;width:100%;height:100%;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+svg#c:active{cursor:grabbing}
+.link{fill:none;stroke:var(--line);stroke-width:1.6}
+.node{cursor:pointer}
+.node rect{fill:var(--f);stroke:var(--s);stroke-width:1.5;transition:stroke-width .15s}
+.node text{fill:var(--ink);pointer-events:none;dominant-baseline:central;text-anchor:middle}
+.node .nm{font-size:14px;font-weight:600}
+.node .sp{font-size:11px;fill:var(--mute)}
+.node.root rect{fill:var(--ink);stroke:var(--ink)}
+.node.root .nm{fill:#fff}.node.root .sp{fill:#cfcad8}
+.node.ptr rect{fill:transparent;stroke-dasharray:4 3}
+.node.ptr .nm{font-weight:500}
+.node.sel rect{stroke-width:3.5}
+.node .bd circle{fill:#fff;stroke:var(--s);stroke-width:1.5}
+.node.root .bd circle{stroke:var(--ink)}
+.node .bd text{font-size:11px;font-weight:700}
+#top{position:fixed;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top) + 10px) 12px 0;display:flex;gap:10px;align-items:flex-start;pointer-events:none}
+#top>*{pointer-events:auto}
+#brand{padding-top:6px;line-height:1.1}
+#brand b{font-size:20px;letter-spacing:.5px}
+#brand span{display:block;font-size:11px;color:var(--mute);margin-top:2px}
+#sbox{flex:1;position:relative;max-width:420px;margin-left:auto}
+#q{width:100%;border:1px solid var(--line);background:#fff;border-radius:22px;padding:11px 16px;font-size:16px;outline:none;color:var(--ink)}
+#q:focus{border-color:#a9a3b8}
+#res{position:absolute;left:0;right:0;top:48px;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;display:none;max-height:50vh;overflow-y:auto;box-shadow:0 8px 24px #0001}
+#res div{padding:10px 16px;cursor:pointer;border-bottom:1px solid #f0ece5}
+#res div:last-child{border:0}
+#res div:active,#res div:hover{background:#f6f2ea}
+#res small{display:block;color:var(--mute);font-size:12px}
+#tools{position:fixed;right:12px;bottom:calc(env(safe-area-inset-bottom) + 14px);display:flex;flex-direction:column;gap:8px;transition:bottom .25s}
+#tools button{width:42px;height:42px;border-radius:21px;border:1px solid var(--line);background:#fff;font-size:20px;color:var(--ink);cursor:pointer;box-shadow:0 2px 8px #0001}
+#tools button:active{background:#f1ede5}
+#card{position:fixed;left:10px;right:70px;bottom:calc(env(safe-area-inset-bottom) + 12px);background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 16px;box-shadow:0 8px 28px #0002;max-width:460px;transform:translateY(0);transition:transform .25s,opacity .25s}
+#card[hidden]{display:block;transform:translateY(130%);opacity:0;pointer-events:none}
+#card h2{margin:0;font-size:18px}
+#card .sub{color:var(--mute);font-size:13px;margin-top:2px}
+#card .cz{margin-top:8px;font-size:15px}
+#card .cz b{font-size:20px}
+#chips{display:flex;gap:6px;overflow-x:auto;margin-top:8px;padding-bottom:2px}
+#chips span{white-space:nowrap;border:1px solid var(--line);border-radius:14px;padding:4px 10px;font-size:13px;background:#faf7f2;cursor:pointer}
+#x{position:absolute;right:10px;top:8px;border:0;background:none;font-size:20px;color:var(--mute);cursor:pointer}
+#hint{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 22px);text-align:center;color:var(--mute);font-size:13px;pointer-events:none;transition:opacity .6s}
+#msg{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:30px;text-align:center;color:var(--mute)}
+</style>
+</head>
+<body>
+<svg id="c"><g id="world"><g id="links"></g><g id="nodes"></g></g></svg>
+<div id="top">
+  <div id="brand"><b>Kashana</b><span id="count"></span></div>
+  <div id="sbox"><input id="q" placeholder="Search a name…" autocomplete="off" autocapitalize="off" spellcheck="false"><div id="res"></div></div>
+</div>
+<div id="tools">
+  <button id="zi" aria-label="Zoom in">+</button>
+  <button id="zo" aria-label="Zoom out">−</button>
+  <button id="fit" aria-label="Fit to screen">⤢</button>
+  <button id="all" aria-label="Open or close all">⋯</button>
+</div>
+<div id="card" hidden>
+  <button id="x" aria-label="Close">×</button>
+  <h2 id="cn"></h2><div class="sub" id="cs"></div>
+  <div class="cz" id="cz"></div><div id="chips"></div>
+</div>
+<div id="hint">Drag to move · pinch to zoom · tap a name to open</div>
+<div id="msg"></div>
+
+<script>
+(() => {
+const NS = 'http://www.w3.org/2000/svg';
+const $ = id => document.getElementById(id);
+const svg = $('c'), world = $('world'), linksG = $('links'), nodesG = $('nodes');
+const ROW = 58, H = 44, GAP = 64;
+const HUES = [12, 38, 58, 100, 150, 178, 205, 238, 278, 322];
+const mctx = document.createElement('canvas').getContext('2d');
+const tw = (s, f) => { mctx.font = f; return mctx.measureText(s).width; };
+const el = (t, a = {}) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); return e; };
+const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'x';
+
+let nodes = [], byId = new Map(), root = null, selected = null, allOpen = false;
+
+/* ---------- parse family.txt ---------- */
+function parse(text) {
+  const v = { children: [] };
+  const stack = [{ indent: -1, node: v }];
+  nodes = []; byId = new Map();
+  text.split(/\r?\n/).forEach(raw => {
+    const t = raw.trim();
+    if (!t || t[0] === '#') return;
+    const indent = raw.match(/^[ \t]*/)[0].replace(/\t/g, '  ').length;
+    let s = t, ptrRef = null, id = null;
+    if (s.includes('->')) { const p = s.split('->'); s = p[0].trim(); ptrRef = p[1].trim(); }
+    const m = s.match(/\[([^\]]+)\]/);
+    if (m) { id = m[1].trim(); s = s.replace(m[0], '').trim(); }
+    const parts = s.split(/\s*\+\s*/);
+    const name = parts[0].trim(), spouse = (parts[1] || '').trim();
+    while (stack.length > 1 && stack[stack.length - 1].indent >= indent) stack.pop();
+    const parent = stack[stack.length - 1].node;
+    let base = id || slug(name), uid = base, c = 1;
+    while (byId.has(uid)) uid = base + '-' + (++c);
+    const n = { id: uid, name, spouse, ptrRef, ptr: !!ptrRef, children: [], parent: parent === v ? null : parent, open: false };
+    byId.set(uid, n);
+    parent.children.push(n);
+    nodes.push(n);
+    stack.push({ indent, node: n });
+  });
+  root = v.children[0];
+  if (!root) throw new Error('family.txt is empty');
+  root.parent = null;
+  nodes = [];
+  (function walk(n, d, b) {
+    n.depth = d; n.branch = b; nodes.push(n);
+    n.children.forEach((c, i) => walk(c, d + 1, d === 0 ? i : b));
+  })(root, 0, -1);
+  nodes.forEach(n => {
+    if (n.ptr) {
+      const r = n.ptrRef;
+      n.target = byId.get(r) || nodes.find(x => !x.ptr && x.name.toLowerCase() === r.toLowerCase()) || null;
+      if (n.target) (n.target.pointers = n.target.pointers || []).push(n);
+    }
+    const nm = n.name + (n.ptr && n.target ? ' ↗' : '');
+    const sub = n.ptr && n.target ? 'see ' + n.target.name : (n.spouse ? '+ ' + n.spouse : '');
+    n.label = nm; n.sub = sub;
+    n.w = Math.max(84, Math.max(tw(nm, '600 14px system-ui,sans-serif'), tw(sub, '11px system-ui,sans-serif')) + 34);
+    n.open = false;
+  });
+  root.open = true;
+  const people = nodes.filter(n => !n.ptr).reduce((a, n) => a + 1 + (n.spouse ? 1 : 0), 0);
+  $('count').textContent = people + ' family members';
+}
+const kids = n => (n.ptr && n.target) ? n.target.children : n.children;
+
+/* ---------- cousins ---------- */
+function parentLabel(n) {
+  const p = n.parent; if (!p) return '';
+  return p.name + (p.spouse ? ' & ' + p.spouse : '');
+}
+function cousinsOf(n) {
+  if (n.ptr && n.target) n = n.target;
+  const P = n.parent; if (!P) return [];
+  const out = new Set();
+  [P, ...(P.pointers || [])].forEach(q => {
+    const g = q.parent; if (!g) return;
+    g.children.forEach(s => { if (s !== q) kids(s).forEach(c => { if (c !== n) out.add(c); }); });
+  });
+  return [...out];
+}
+
+/* ---------- layout ---------- */
+function layout() {
+  nodes.forEach(n => n.vis = false);
+  let row = 0; const colW = [];
+  (function walk(n) {
+    n.vis = true;
+    colW[n.depth] = Math.max(colW[n.depth] || 0, n.w);
+    if (!(n.open && n.children.length)) { n.ty = row++ * ROW; return; }
+    n.children.forEach(walk);
+    n.ty = (n.children[0].ty + n.children[n.children.length - 1].ty) / 2;
+  })(root);
+  const colX = [0];
+  for (let d = 1; d < colW.length; d++) colX[d] = colX[d - 1] + colW[d - 1] + GAP;
+  nodes.forEach(n => {
+    if (n.vis) n.tx = colX[n.depth];
+    else { n.tx = n.parent.tx; n.ty = n.parent.ty; }
+  });
+  kick();
+}
+
+/* ---------- elements ---------- */
+function mk(n) {
+  const g = el('g', { class: 'node' + (n.ptr ? ' ptr' : '') + (n === root ? ' root' : '') });
+  g.dataset.id = n.id;
+  if (n.branch >= 0) {
+    const h = HUES[n.branch % HUES.length];
+    g.style.setProperty('--s', `hsl(${h} 42% 52%)`);
+    g.style.setProperty('--f', `hsl(${h} 65% 95%)`);
+  }
+  g.appendChild(el('rect', { x: 0, y: -H / 2, width: n.w, height: H, rx: H / 2 }));
+  const two = !!n.sub;
+  const a = el('text', { class: 'nm', x: n.w / 2, y: two ? -7 : 1 }); a.textContent = n.label; g.appendChild(a);
+  if (two) { const b = el('text', { class: 'sp', x: n.w / 2, y: 10 }); b.textContent = n.sub; g.appendChild(b); }
+  if (n.children.length && !n.ptr) {
+    const bd = el('g', { class: 'bd', transform: `translate(${n.w} 0)` });
+    bd.appendChild(el('circle', { r: 11 }));
+    n.badge = el('text', { x: 0, y: 1 });
+    bd.appendChild(n.badge); g.appendChild(bd);
+  }
+  nodesG.appendChild(g); n.el = g;
+  if (n.parent) { n.link = el('path', { class: 'link' }); linksG.appendChild(n.link); }
+}
+function badgeText(n) {
+  if (n.badge) n.badge.textContent = n.open ? '–' : String(countDesc(n));
+}
+function countDesc(n) { return n.children.length; }
+
+/* ---------- camera + animation loop ---------- */
+const cam = { x: 0, y: 0, k: 1, goal: null, vx: 0, vy: 0 };
+let dragging = false, raf = 0, last = 0;
+function applyCam() { world.setAttribute('transform', `translate(${cam.x} ${cam.y}) scale(${cam.k})`); }
+function kick() { if (!raf) { last = performance.now(); raf = requestAnimationFrame(tick); } }
+function tick(now) {
+  raf = 0;
+  const dt = Math.min(0.05, (now - last) / 1000); last = now;
+  const k = 1 - Math.exp(-dt * 12);
+  let busy = false;
+  for (const n of nodes) {
+    if (!n.el) {
+      if (!n.vis) continue;
+      mk(n);
+      n.x = n.parent ? n.parent.x : n.tx; n.y = n.parent ? n.parent.y : n.ty; n.o = 0;
+    }
+    const to = n.vis ? 1 : 0;
+    const dx = n.tx - n.x, dy = n.ty - n.y, dO = to - n.o;
+    if (Math.abs(dx) > .1 || Math.abs(dy) > .1 || Math.abs(dO) > .01) {
+      n.x += dx * k; n.y += dy * k; n.o += dO * k; busy = true;
+    } else { n.x = n.tx; n.y = n.ty; n.o = to; }
+    if (!n.vis && n.o < .02) {
+      if (!n.hid) { n.el.style.display = 'none'; if (n.link) n.link.style.display = 'none'; n.hid = true; }
+      continue;
+    }
+    if (n.hid) { n.el.style.display = ''; if (n.link) n.link.style.display = ''; n.hid = false; }
+    n.el.setAttribute('transform', `translate(${n.x} ${n.y})`);
+    n.el.style.opacity = n.o;
+    n.el.classList.toggle('sel', n === selected);
+    badgeText(n);
+    if (n.link) {
+      const p = n.parent, x1 = p.x + p.w + (p.children.length ? 11 : 0), x2 = n.x, mx = (x1 + x2) / 2;
+      n.link.setAttribute('d', `M${x1} ${p.y}C${mx} ${p.y} ${mx} ${n.y} ${x2} ${n.y}`);
+      n.link.style.opacity = n.o;
+    }
+  }
+  if (cam.goal && !dragging) {
+    const g = cam.goal;
+    cam.x += (g.x - cam.x) * k; cam.y += (g.y - cam.y) * k; cam.k += (g.k - cam.k) * k;
+    if (Math.abs(g.x - cam.x) < .2 && Math.abs(g.y - cam.y) < .2 && Math.abs(g.k - cam.k) < .001) { cam.x = g.x; cam.y = g.y; cam.k = g.k; cam.goal = null; }
+    else busy = true;
+  } else if (!dragging && (Math.abs(cam.vx) > .02 || Math.abs(cam.vy) > .02)) {
+    cam.x += cam.vx * dt * 1000; cam.y += cam.vy * dt * 1000;
+    const f = Math.exp(-dt * 3.2); cam.vx *= f; cam.vy *= f; busy = true;
+  }
+  applyCam();
+  if (busy || dragging) kick();
+}
+
+/* ---------- framing ---------- */
+const W = () => window.innerWidth, Hh = () => window.innerHeight;
+function bounds() {
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+  nodes.forEach(n => { if (!n.vis) return; x0 = Math.min(x0, n.tx); x1 = Math.max(x1, n.tx + n.w + 12); y0 = Math.min(y0, n.ty - H / 2); y1 = Math.max(y1, n.ty + H / 2); });
+  return { x0, y0, x1, y1 };
+}
+function fit() {
+  const b = bounds(), padT = 80, padB = 30, padX = 20;
+  const bw = b.x1 - b.x0, bh = b.y1 - b.y0;
+  const k = Math.max(.15, Math.min(1, (W() - padX * 2) / bw, (Hh() - padT - padB) / bh));
+  cam.goal = { k, x: (W() - bw * k) / 2 - b.x0 * k, y: padT + (Hh() - padT - padB - bh * k) / 2 - b.y0 * k };
+  cam.vx = cam.vy = 0; kick();
+}
+function centerOn(n) {
+  const k = Math.min(1.4, Math.max(cam.goal ? cam.goal.k : cam.k, .85));
+  cam.goal = { k, x: W() / 2 - (n.tx + n.w / 2) * k, y: Hh() * .38 - n.ty * k };
+  cam.vx = cam.vy = 0; kick();
+}
+function relayoutKeeping(anchor) {
+  const ox = anchor.tx, oy = anchor.ty;
+  layout();
+  const base = cam.goal || { x: cam.x, y: cam.y, k: cam.k };
+  cam.goal = { k: base.k, x: base.x - (anchor.tx - ox) * base.k, y: base.y - (anchor.ty - oy) * base.k };
+  kick();
+}
+
+/* ---------- selection + card ---------- */
+function reveal(n) {
+  let a = n.parent, changed = false;
+  while (a) { if (!a.open) { a.open = true; changed = true; } a = a.parent; }
+  layout();
+}
+function select(n, via) {
+  if (n.ptr && n.target) n = n.target;
+  reveal(n); selected = n;
+  showCard(n, via);
+  centerOn(n); kick();
+}
+function showCard(n, via) {
+  $('cn').textContent = via || (n.name + (n.spouse ? ' & ' + n.spouse : ''));
+  if (via) {
+    $('cs').textContent = 'Married to ' + n.name; $('cz').textContent = n.children.length ? n.children.length + ' ' + (n.children.length > 1 ? 'children' : 'child') : '';
+    $('chips').innerHTML = '';
+  } else {
+    $('cs').textContent = n.parent ? 'Child of ' + parentLabel(n) : 'Founders of the family';
+    const c = cousinsOf(n);
+    const cz = $('cz'); cz.innerHTML = '';
+    if (n.parent && n.parent.parent) {
+      const b = document.createElement('b'); b.textContent = c.length;
+      cz.append(b, ' first cousin' + (c.length === 1 ? '' : 's'));
+    } else if (n.children.length) cz.textContent = n.children.length + ' ' + (n.children.length > 1 ? 'children' : 'child');
+    const ch = $('chips'); ch.innerHTML = '';
+    c.forEach(x => { const s = document.createElement('span'); s.textContent = x.name; s.onclick = () => select(x); ch.appendChild(s); });
+  }
+  $('card').hidden = false;
+  $('tools').style.bottom = '';
+}
+function closeCard() { selected = null; $('card').hidden = true; kick(); }
+
+/* ---------- gestures ---------- */
+const pts = new Map(); let down = null, prevD = 0, prevM = null, lastT = 0;
+const hint = $('hint'); const hideHint = () => { hint.style.opacity = 0; };
+svg.addEventListener('pointerdown', e => {
+  svg.setPointerCapture(e.pointerId);
+  pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
+  cam.goal = null; cam.vx = cam.vy = 0; dragging = true; hideHint();
+  if (pts.size === 1) down = { x: e.clientX, y: e.clientY, t: performance.now(), moved: false };
+  else if (down) down.moved = true;
+  if (pts.size === 2) { const [a, b] = [...pts.values()]; prevD = Math.hypot(a.x - b.x, a.y - b.y); prevM = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }; }
+  kick();
+});
+svg.addEventListener('pointermove', e => {
+  const p = pts.get(e.pointerId); if (!p) return;
+  const now = performance.now();
+  if (pts.size === 1) {
+    const dx = e.clientX - p.x, dy = e.clientY - p.y;
+    if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 6) down.moved = true;
+    cam.x += dx; cam.y += dy;
+    const dtm = Math.max(1, now - lastT);
+    cam.vx = cam.vx * .6 + (dx / dtm) * .4; cam.vy = cam.vy * .6 + (dy / dtm) * .4;
+    lastT = now;
+    p.x = e.clientX; p.y = e.clientY;
+  } else {
+    p.x = e.clientX; p.y = e.clientY;
+    const [a, b] = [...pts.values()];
+    const d = Math.hypot(a.x - b.x, a.y - b.y), m = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 };
+    if (prevD > 0) {
+      const nk = Math.min(3, Math.max(.15, cam.k * d / prevD));
+      const wx = (prevM.x - cam.x) / cam.k, wy = (prevM.y - cam.y) / cam.k;
+      cam.k = nk; cam.x = m.x - wx * nk; cam.y = m.y - wy * nk;
+    }
+    prevD = d; prevM = m; cam.vx = cam.vy = 0;
+  }
+  applyCam();
+});
+function up(e) {
+  if (!pts.has(e.pointerId)) return;
+  const wasSingle = pts.size === 1;
+  pts.delete(e.pointerId);
+  if (pts.size === 1) { cam.vx = cam.vy = 0; }
+  if (pts.size === 0) {
+    dragging = false;
+    if (wasSingle && down && !down.moved && performance.now() - down.t < 450 && e.type === 'pointerup') tap(e.clientX, e.clientY);
+    if (performance.now() - lastT > 80) cam.vx = cam.vy = 0;
+    down = null; kick();
+  }
+}
+svg.addEventListener('pointerup', up);
+svg.addEventListener('pointercancel', up);
+svg.addEventListener('wheel', e => {
+  e.preventDefault(); cam.goal = null; hideHint();
+  const nk = Math.min(3, Math.max(.15, cam.k * Math.exp(-e.deltaY * (e.ctrlKey ? .01 : .0015))));
+  const wx = (e.clientX - cam.x) / cam.k, wy = (e.clientY - cam.y) / cam.k;
+  cam.k = nk; cam.x = e.clientX - wx * nk; cam.y = e.clientY - wy * nk; applyCam();
+}, { passive: false });
+['gesturestart', 'gesturechange'].forEach(t => document.addEventListener(t, e => e.preventDefault()));
+
+function tap(x, y) {
+  $('res').style.display = 'none'; $('q').blur();
+  const t = document.elementFromPoint(x, y), g = t && t.closest && t.closest('.node');
+  if (!g) { if (selected) closeCard(); return; }
+  const n = byId.get(g.dataset.id); if (!n) return;
+  if (n.ptr && n.target) { select(n.target); return; }
+  selected = n;
+  if (n.children.length) { n.open = !n.open; relayoutKeeping(n); }
+  showCard(n);
+  kick();
+}
+
+/* ---------- search ---------- */
+function runSearch() {
+  const q = $('q').value.trim().toLowerCase(), box = $('res');
+  box.innerHTML = '';
+  if (!q) { box.style.display = 'none'; return; }
+  const hits = [];
+  nodes.forEach(n => {
+    if (n.ptr) return;
+    if (n.name.toLowerCase().includes(q)) hits.push({ n, label: n.name, sub: n.parent ? 'Child of ' + parentLabel(n) : 'Founders', s: n.name.toLowerCase().startsWith(q) ? 0 : 1 });
+    if (n.spouse && n.spouse.toLowerCase().includes(q)) hits.push({ n, label: n.spouse, via: n.spouse, sub: 'Married to ' + n.name, s: n.spouse.toLowerCase().startsWith(q) ? 0 : 1 });
+  });
+  hits.sort((a, b) => a.s - b.s);
+  hits.slice(0, 8).forEach(h => {
+    const d = document.createElement('div'); d.textContent = h.label;
+    const s = document.createElement('small'); s.textContent = h.sub; d.appendChild(s);
+    d.onclick = () => { box.style.display = 'none'; $('q').value = ''; $('q').blur(); select(h.n, h.via); };
+    box.appendChild(d);
+  });
+  if (!hits.length) { const d = document.createElement('div'); d.textContent = 'No match'; box.appendChild(d); }
+  box.style.display = 'block';
+}
+$('q').addEventListener('input', runSearch);
+
+/* ---------- buttons ---------- */
+function zoomBy(f) {
+  const base = cam.goal || cam, nk = Math.min(3, Math.max(.15, base.k * f));
+  const cx = W() / 2, cy = Hh() / 2, wx = (cx - base.x) / base.k, wy = (cy - base.y) / base.k;
+  cam.goal = { k: nk, x: cx - wx * nk, y: cy - wy * nk }; cam.vx = cam.vy = 0; kick();
+}
+$('zi').onclick = () => zoomBy(1.5);
+$('zo').onclick = () => zoomBy(1 / 1.5);
+$('fit').onclick = fit;
+$('x').onclick = closeCard;
+$('all').onclick = () => {
+  allOpen = !allOpen;
+  nodes.forEach(n => { if (n !== root) n.open = allOpen; });
+  root.open = true; layout(); fit();
+};
+window.addEventListener('resize', kick);
+
+/* ---------- start ---------- */
+fetch('family.txt', { cache: 'no-cache' })
+  .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
+  .then(t => { parse(t); layout(); tick(performance.now()); fit(); setTimeout(hideHint, 6000); })
+  .catch(err => {
+    const m = $('msg'); m.style.display = 'flex';
+    m.textContent = 'Could not load family.txt (' + err.message + '). If testing on your computer, run "npx serve" in this folder instead of opening the file directly.';
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+# KASHANA FAMILY TREE
+# Indent (2 spaces) = child of the line above.   "Name + Spouse" = married couple.
+# Optional: put [some-id] after a name if two people share a name AND you need to link to one of them.
+# "Name -> Other" = shows Name as a small link that jumps to Other (used when a couple belongs to two branches;
+#   list the children only once, under the main side).
+
+Kulsoom + Husband
+  Bade Naana
+    Farookh
+      Nazneen
+      Nilofer
+    Firri + Zeba
+      Alvina
+      Unnamed Son
+    Razi + Sabiha
+      Aqsa
+    Irshad
+      Tabrez
+      Danisha
+      Ramsha
+    Rufi + Taj
+      Farid
+      Fahad
+      Zoya
+    Mushtaque
+      Gulrez
+      Areeba
+  Eqbal Ahmad
+    Arshia + Faiz
+      Madeeha
+      Hamza
+      Hamdaan
+    Hasan + Kahkasha
+      Maryam Hasan
+      Zaid Hasan
+    Hussain + Shabnam
+      Fouzan
+    Alia + Ali
+      Athar
+      Suhan
+    Amber + Sarfaraz
+      Aryan
+      Zyan
+    Iffat + Irshad
+      Innaya
+      Izaan
+  Shamima Anwar + Khurshaid Anwar
+    Farah + Afzal
+      Heba + Wasim
+        Hadi
+      Sana
+    Faiz -> Arshia
+    Farrukh + Sajid
+      Ammar
+      Umar
+      Ummair
+      Usman
+      Ali
+    Fatma + Manzoor
+      Rehan
+      Zainab
+    Fahad + Farheen
+      Kulsoom
+      Zubaida
+  Jamal + Afsari Sanober
+    Sharique + Almas
+      Maira
+      Yusuf
+    Shazia + Nesar
+      Armaan
+      Ayeza
+    Sadia + Khalique
+      Laiba
+    Sharib + Shabiya
+      Ibrahim
+    Tarique + Aaliya
+      Aliza
+  Zulfeqar
+    Aamir
+    Shahla
+  Naeema + Yahya
+    Raju + Sumbul
+    Bubli
+    Tasneem + Irshad
+      Ishaan
+      Raiyan
+      Affaan
+    Deeba
+  Shakila + Mukarram
+    Sumbul -> Raju
+    Aariz + Kashif
+    Zeeshu + Fatima
+      Zoheb
+      Zyan
+  Shaheen
+    Kashif -> Aariz
+    Anam
+  Atti
+    Mahwish
+    Waqar
+    Ayesha
+    Zikra
+  Ashfaq
