@@ -6,66 +6,66 @@
 
 Kulsoom + Husband
   Shafique Ahmad + Raziya Khatoon
-    Farookh + Nikhat
+    Farookh Ahmad + Nikhat
       Nazneen + Abrar
         Ifra
         Umar
       Nilofer
-    Firri + Zeba
-      Alvina
-      Danish
-    Razi + Sabiha
-      Aqsa
+    Firri Ahmad + Zeba
+      Alvina Reyaz
+      Danish Reyaz
+    Razi Ahmad + Sabiha
+      Aqsa Fatima
     Irshad
       Tabrez + Tehreem
         Shahzain
-      Danisha
+      Danish
       Ramsha
     Rufi + Taj
       Farid
       Fahad
       Zoya
-    Mushtaque
+    Mushtaque Ahmad
       Gulrez
       Areeba
   Eqbal Ahmad
-    Arshia + Faiz
-      Madeeha
-      Hamza
-      Hamdaan
-    Hasan + Kahkasha
+    Arshia Ahmad + Faiz Anwar
+      Madeeha Anwar
+      Hamza Faiz Anwar
+      Hamdaan Faiz Anwar
+    Hasan Eqbal + Kahkasha Bano
       Maryam Hasan
       Zaid Hasan
-    Hussain + Shabnam
-      Fouzan
-    Alia + Ali
+    Hussain Eqbal + Shabnam
+      Fouzan Hussain
+    Alia Ahmad + Ali Ahmad
       Athar
       Suhan
-    Amber + Sarfaraz
+    Amber Ahmad + Sarfaraz
       Aryan
       Zyan
-    Iffat + Irshad
-      Innaya
-      Izaan
+    Iffat Ahmad + Irshad Ahmad
+      Innaya Ahmad
+      Izaan Ahmad
   Shamima Anwar + Khurshaid Anwar
-    Farah + Afzal
-      Heba + Wasim
+    Farah Anwar + Afzal Ahmad
+      Heba Ahmad + Wasim
         Hadi
-      Sana
-    Faiz -> Arshia
-    Farrukh + Sajid
-      Ammar
-      Umar
-      Ummair
-      Usman
-      Ali
-    Fatma + Manzoor
-      Rehan
-      Zainab
-    Fahad + Farheen
-      Kulsoom
-      Zubaida
-  Jamal + Afsari Sanober
+      Sana Ahmad
+    Faiz Anwar -> Arshia Ahmad
+    Farrukh Anwar + Sajid
+      Ammar bin Sajid
+      Umar bin Sajid
+      Ummair bin Sajid
+      Usman bin Sajid
+      Ali bin Sajid
+    Fatma Anwar + Manzoor Hashmi
+      Rehan Hashmi
+      Zainab Hashmi
+    Fahad Anwar + Farheen Shayan
+      Kulsoom Maria Anwar
+      Zubaida Mariam Anwar
+  Jamal Ahmad + Afsari Sanober
     Sharique + Almas
       Maira
       Yusuf
@@ -78,9 +78,9 @@ Kulsoom + Husband
       Ibrahim
     Tarique + Aaliya
       Aliza
-  Zulfeqar
-    Aamir
-    Shahla
+  Zulfiquar Ahmad
+    Aamir Ahmad
+    Shahla Ahmad
   Naeema + Yahya
     Raju + Sumbul
     Bubli
