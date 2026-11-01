@@ -22,9 +22,12 @@ svg#c:active{cursor:grabbing}
 .node text{fill:var(--ink);pointer-events:none;dominant-baseline:central;text-anchor:middle}
 .node .nm{font-size:14px;font-weight:600}
 .node .sp{font-size:11px;fill:var(--mute)}
+.node.me rect{stroke-width:3.5}
+.node .star{display:none;font-size:12px;text-anchor:middle}
+.node.me .star{display:block}
 .node.root rect{fill:var(--rootbg);stroke:var(--rootbg)}
 .node.root .nm{fill:var(--roottx)}.node.root .sp{fill:var(--roottx);opacity:.7}
-.node.ptr rect{fill:transparent;stroke-dasharray:4 3}
+.node.ptr rect{stroke-dasharray:4 3}
 .node.ptr .nm{font-weight:500}
 .node.sel rect{stroke-width:3.5}
 .node.path rect{stroke-width:4;filter:drop-shadow(0 0 6px hsl(var(--h) 70% 55% / .65))}
@@ -47,13 +50,19 @@ input.in:focus{border-color:var(--mute)}
 .hits div:last-child{border:0}
 .hits div:active,.hits div:hover{background:var(--hover)}
 .hits small{display:block;color:var(--mute);font-size:12px}
-#tools{position:fixed;right:12px;bottom:calc(env(safe-area-inset-bottom) + 14px);display:flex;flex-direction:column;gap:8px;z-index:4}
-#tools button{width:42px;height:42px;border-radius:21px;border:1px solid var(--line);background:var(--panel);font-size:19px;color:var(--ink);cursor:pointer;box-shadow:0 2px 8px var(--shadow)}
-#tools button:active{background:var(--hover)}
+#foot{position:fixed;left:0;right:0;bottom:0;background:var(--panel);border-top:1px solid var(--line);padding:6px 6px calc(env(safe-area-inset-bottom) + 4px);z-index:8}
+#fb{display:flex}
+#fb button{flex:1;border:0;background:none;color:var(--ink);display:flex;flex-direction:column;align-items:center;gap:2px;padding:4px 0;font:inherit;cursor:pointer;border-radius:10px}
+#fb button:active{background:var(--hover)}
+#fb i{font-style:normal;font-size:19px;line-height:1}
+#fb span{font-size:11px}
+#credit{text-align:center;font-size:10.5px;color:var(--mute);margin-top:2px}
+#credit b{font-weight:600;color:var(--ink)}
+#toast{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(env(safe-area-inset-bottom) + 96px);background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:18px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .25s;z-index:20;max-width:86vw;text-align:center}
 .sheet{position:fixed;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px 16px;box-shadow:0 8px 28px var(--shadow);max-width:460px;overflow-y:auto;transition:transform .25s,opacity .25s;z-index:6}
 .sheet[hidden]{display:block;opacity:0;pointer-events:none}
-#card,#leg{left:10px;right:66px;bottom:calc(env(safe-area-inset-bottom) + 12px);max-height:52vh}
-#card[hidden],#leg[hidden]{transform:translateY(130%)}
+#card,#leg,#share,#more,#sug,#me{left:10px;right:10px;bottom:calc(env(safe-area-inset-bottom) + 84px);max-height:56vh}
+#card[hidden],#leg[hidden],#share[hidden],#more[hidden],#sug[hidden],#me[hidden]{transform:translateY(130%)}
 #rel{left:10px;right:10px;top:calc(env(safe-area-inset-top) + 60px);max-height:62vh}
 #rel[hidden]{transform:translateY(-130%)}
 .sheet h2{margin:0;font-size:18px;padding-right:26px}
@@ -71,6 +80,12 @@ input.in:focus{border-color:var(--mute)}
 .fact{font-size:13.5px;padding:5px 0 5px 10px;border-left:3px solid var(--line);margin-top:6px;line-height:1.35}
 .btn{margin-top:12px;width:100%;border:1px solid var(--ink);background:none;color:var(--ink);border-radius:20px;padding:9px;font:inherit;font-size:14px;cursor:pointer}
 .btn:active{background:var(--hover)}
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.row2 .btn{margin-top:12px}
+.lnk{display:block;margin:12px auto 0;border:0;background:none;color:var(--mute);font:inherit;font-size:13px;text-decoration:underline;cursor:pointer}
+.chips span.on{border-color:var(--ink);font-weight:600}
+textarea.in{border-radius:16px;min-height:90px;resize:vertical;font-family:inherit;margin-top:10px}
+.sheet .in{margin-top:8px}
 .rrow{margin-top:10px}
 .rrow label{font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.08em;margin-left:6px}
 .rrow .hits{display:none;margin-top:6px}
@@ -93,26 +108,17 @@ input.in:focus{border-color:var(--mute)}
   <div id="brand"><b>Kashana</b><span id="count"></span></div>
   <div id="sbox"><input class="in" id="q" placeholder="Search a name…" autocomplete="off" autocapitalize="off" spellcheck="false"><div class="hits" id="res"></div></div>
 </div>
-<div id="tools">
-  <button id="rl" aria-label="How are we related">⇄</button>
-  <button id="lg" aria-label="Legend">i</button>
-  <button id="th" aria-label="Dark mode">☾</button>
-  <button id="zi" aria-label="Zoom in">+</button>
-  <button id="zo" aria-label="Zoom out">−</button>
-  <button id="fit" aria-label="Fit to screen">⤢</button>
-  <button id="all" aria-label="Open or close all">⋯</button>
-</div>
-
 <div class="sheet" id="card" hidden>
-  <button class="close" id="x" aria-label="Close">×</button>
+  <button class="close" aria-label="Close">×</button>
   <h2 id="cn"></h2><div class="sub" id="cs"></div>
   <div id="stats"></div><div class="chips" id="chips"></div>
   <div id="facts"></div>
-  <button class="btn" id="cmp">How are we related?</button>
+  <div class="row2"><button class="btn" id="cmp">Relatives</button><button class="btn" id="meb">This is me</button></div>
+  <button class="lnk" id="sugb">Suggest a correction</button>
 </div>
 
 <div class="sheet" id="rel" hidden>
-  <button class="close" id="rx" aria-label="Close">×</button>
+  <button class="close" aria-label="Close">×</button>
   <h2>How are we related?</h2>
   <div class="rrow"><label>Person 1</label><input class="in" id="ra" placeholder="Search a name…" autocomplete="off" spellcheck="false"><div class="hits" id="rla"></div></div>
   <div class="rrow"><label>Person 2</label><input class="in" id="rb" placeholder="Search a name…" autocomplete="off" spellcheck="false"><div class="hits" id="rlb"></div></div>
@@ -120,7 +126,7 @@ input.in:focus{border-color:var(--mute)}
 </div>
 
 <div class="sheet" id="leg" hidden>
-  <button class="close" id="lx" aria-label="Close">×</button>
+  <button class="close" aria-label="Close">×</button>
   <h2>Legend</h2>
   <div class="sub">Branches — tap to jump</div>
   <div id="lbr"></div>
@@ -129,6 +135,57 @@ input.in:focus{border-color:var(--mute)}
   <div class="lrow"><i class="sw sp"></i> Married into another branch (tap to jump)</div>
   <div class="lrow" style="color:var(--mute)">“Gen” labels at the top show the generation of each column.</div>
 </div>
+
+<div class="sheet" id="share" hidden>
+  <button class="close" aria-label="Close">×</button>
+  <h2>Share Kashana</h2>
+  <div class="sub">Picture shows</div>
+  <div class="chips" id="pscope"><span class="on" data-w="1">Whole family</span><span data-w="0">What I see now</span></div>
+  <button class="btn" id="shLink">Share link</button>
+  <button class="btn" id="shPic">Share picture</button>
+  <button class="btn" id="saPic">Save picture</button>
+</div>
+
+<div class="sheet" id="more" hidden>
+  <button class="close" aria-label="Close">×</button>
+  <h2>More</h2>
+  <div class="row2"><button class="btn" id="zi">Zoom in +</button><button class="btn" id="zo">Zoom out −</button></div>
+  <button class="btn" id="fit">Fit whole tree on screen</button>
+  <button class="btn" id="all">Open / close everyone</button>
+  <button class="btn" id="thm">Dark mode</button>
+  <button class="btn" id="sugm">Suggest a correction or new person</button>
+  <div class="sub" style="text-align:center;margin-top:14px">Kashana · made by Madeeha Anwar</div>
+</div>
+
+<div class="sheet" id="sug" hidden>
+  <button class="close" aria-label="Close">×</button>
+  <h2>Suggest a correction</h2>
+  <div class="sub" id="sugabout"></div>
+  <textarea class="in" id="sugtxt" placeholder="What is wrong, or who should be added? e.g. “Add Zara (daughter of Sajid & Farrukh)”"></textarea>
+  <input class="in" id="sugname" placeholder="Your name" autocomplete="off">
+  <button class="btn" id="sugsend">Send on WhatsApp</button>
+  <div class="sub" style="margin-top:8px">It opens WhatsApp with the message ready. Nothing changes on the tree until it is approved.</div>
+</div>
+
+<div class="sheet" id="me" hidden>
+  <button class="close" aria-label="Close">×</button>
+  <h2>Who are you?</h2>
+  <div class="sub">Pick yourself once. Kashana remembers it on this phone.</div>
+  <input class="in" id="mq" placeholder="Search your name…" autocomplete="off" spellcheck="false">
+  <div class="hits" id="mres" style="margin-top:6px"></div>
+</div>
+
+<div id="foot">
+  <div id="fb">
+    <button id="bRel"><i>⇄</i><span>Relatives</span></button>
+    <button id="bLeg"><i>ⓘ</i><span>Legend</span></button>
+    <button id="bMe"><i>★</i><span>Me</span></button>
+    <button id="bShare"><i>⤴</i><span>Share</span></button>
+    <button id="bMore"><i>⋯</i><span>More</span></button>
+  </div>
+  <div id="credit">Kashana · made by <b>Madeeha Anwar</b></div>
+</div>
+<div id="toast"></div>
 <div id="msg"></div>
 
 <script>
@@ -148,17 +205,19 @@ let nodes = [], byId = new Map(), root = null, selected = null, allOpen = false;
 let nameCnt = new Map(), maxDepth = 0;
 let pathNodes = null; const hotLinks = new Set();
 const relPick = { a: null, b: null };
+let me = null, treeB = { x0: 0, x1: 0, y0: 0, y1: 0 };
+const WA = '917595868655';
+function toast(t) { const e = $('toast'); e.textContent = t; e.style.opacity = 1; clearTimeout(e._t); e._t = setTimeout(() => e.style.opacity = 0, 2600); }
 
 /* ---------- theme ---------- */
 function setTheme(t) {
   document.documentElement.dataset.theme = t;
-  $('th').textContent = t === 'dark' ? '☀' : '☾';
+  $('thm').textContent = t === 'dark' ? 'Light mode' : 'Dark mode';
   document.querySelector('meta[name=theme-color]').content = t === 'dark' ? '#16151b' : '#faf7f2';
-  try { localStorage.setItem('kashana-theme', t); } catch (e) {}
 }
 let saved = null; try { saved = localStorage.getItem('kashana-theme'); } catch (e) {}
 setTheme(saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
-$('th').onclick = () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+$('thm').onclick = () => { const t = document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark'; setTheme(t); try { localStorage.setItem('kashana-theme', t); } catch (e) {} };
 
 /* ---------- parse family.txt ---------- */
 function grab(str) {
@@ -283,6 +342,15 @@ function relLabel(da, db, g) { // what B is to A; da = A→common ancestor, db =
   if (db === 1) return gr(da - 2) + w('uncle', 'aunt', 'uncle/aunt');
   return '';
 }
+function youLabel(B) {
+  if (B === me) return 'That’s you ★';
+  const r = relation(me, B); if (!r) return null;
+  const { da, db } = r; let t;
+  if (da >= 2 && db >= 2) { const d = Math.min(da, db) - 1, rem = Math.abs(da - db); t = `your ${ordn(d)} cousin${rem ? ' ' + remTxt(rem) : ''}`; }
+  else t = 'your ' + relLabel(da, db, B.g);
+  if (married(me, B)) t += ' (and married to you)';
+  return `${B.name} is ${t}.`;
+}
 const married = (A, B) => (A.pointers || []).includes(B) || (B.pointers || []).includes(A);
 
 /* ---------- layout ---------- */
@@ -302,6 +370,9 @@ function layout() {
     if (n.vis) n.tx = colX[n.depth];
     else { n.tx = n.parent.tx; n.ty = n.parent.ty; }
   });
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+  nodes.forEach(n => { if (n.vis) { x0 = Math.min(x0, n.tx); x1 = Math.max(x1, n.tx + n.w + 12); y0 = Math.min(y0, n.ty - H / 2); y1 = Math.max(y1, n.ty + H / 2); } });
+  treeB = { x0, x1, y0, y1 };
   kick();
 }
 
@@ -311,6 +382,7 @@ function mk(n) {
   g.dataset.id = n.id;
   if (n.branch >= 0) g.style.setProperty('--h', HUES[n.branch % HUES.length]);
   g.appendChild(el('rect', { x: 0, y: -H / 2, width: n.w, height: H, rx: H / 2 }));
+  const st = el('text', { class: 'star', x: 14, y: -H / 2 + 8 }); st.textContent = '★'; g.appendChild(st);
   const two = !!n.sub;
   const a = el('text', { class: 'nm', x: n.w / 2, y: two ? -7 : 1 }); a.textContent = n.label; g.appendChild(a);
   if (two) { const b = el('text', { class: 'sp', x: n.w / 2, y: 10 }); b.textContent = n.sub; g.appendChild(b); }
@@ -329,6 +401,10 @@ function badgeText(n) { if (n.badge) n.badge.textContent = n.open ? '–' : Stri
 const cam = { x: 0, y: 0, k: 1, goal: null, vx: 0, vy: 0 };
 let dragging = false, raf = 0, last = 0;
 const genEls = () => $('gens').children;
+function limits() {
+  const k = cam.k, mx = Math.min(140, window.innerWidth * .35), my = Math.min(150, window.innerHeight * .25);
+  return { xmin: mx - treeB.x1 * k, xmax: window.innerWidth - mx - treeB.x0 * k, ymin: my - treeB.y1 * k, ymax: window.innerHeight - my - treeB.y0 * k };
+}
 function applyCam() { world.setAttribute('transform', `translate(${cam.x} ${cam.y}) scale(${cam.k})`); }
 function kick() { if (!raf) { last = performance.now(); raf = requestAnimationFrame(tick); } }
 function tick(now) {
@@ -361,6 +437,7 @@ function tick(now) {
     n.el.setAttribute('transform', `translate(${n.x} ${n.y})`);
     n.el.style.opacity = n.o * (onPath ? 1 : .28);
     n.el.classList.toggle('sel', n === selected);
+    n.el.classList.toggle('me', n === me);
     n.el.classList.toggle('path', !!pathNodes && onPath);
     badgeText(n);
     if (n.link) {
@@ -380,6 +457,11 @@ function tick(now) {
     cam.x += cam.vx * dt * 1000; cam.y += cam.vy * dt * 1000;
     const f = Math.exp(-dt * 3.2); cam.vx *= f; cam.vy *= f; busy = true;
   }
+  if (!dragging && !cam.goal && pts.size === 0) {
+    const L = limits();
+    const ex = Math.min(L.xmax, Math.max(L.xmin, cam.x)) - cam.x, ey = Math.min(L.ymax, Math.max(L.ymin, cam.y)) - cam.y;
+    if (Math.abs(ex) > .3 || Math.abs(ey) > .3) { cam.x += ex * k * .6; cam.y += ey * k * .6; cam.vx *= .5; cam.vy *= .5; busy = true; }
+  }
   applyCam();
   const ge = genEls(), Wd = window.innerWidth;
   for (let d = 0; d < ge.length; d++) {
@@ -393,10 +475,10 @@ function tick(now) {
 
 /* ---------- framing ---------- */
 const W = () => window.innerWidth, Hh = () => window.innerHeight;
-function fitNodes(list, padT, maxK) {
+function fitNodes(list, padT, maxK, padB = 120) {
   let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
   list.forEach(n => { x0 = Math.min(x0, n.tx); x1 = Math.max(x1, n.tx + n.w + 12); y0 = Math.min(y0, n.ty - H / 2); y1 = Math.max(y1, n.ty + H / 2); });
-  const padB = 30, padX = 20, bw = x1 - x0, bh = y1 - y0;
+  const padX = 20, bw = x1 - x0, bh = y1 - y0;
   const k = Math.max(.15, Math.min(maxK, (W() - padX * 2) / bw, (Hh() - padT - padB) / bh));
   cam.goal = { k, x: (W() - bw * k) / 2 - x0 * k, y: padT + (Hh() - padT - padB - bh * k) / 2 - y0 * k };
   cam.vx = cam.vy = 0; kick();
@@ -404,7 +486,7 @@ function fitNodes(list, padT, maxK) {
 function fit() { fitNodes(nodes.filter(n => n.vis), 112, 1); }
 function centerOn(n) {
   const k = Math.min(1.4, Math.max(cam.goal ? cam.goal.k : cam.k, .85));
-  cam.goal = { k, x: W() / 2 - (n.tx + n.w / 2) * k, y: Hh() * .34 - n.ty * k };
+  cam.goal = { k, x: W() / 2 - (n.tx + n.w / 2) * k, y: Hh() * .3 - n.ty * k };
   cam.vx = cam.vy = 0; kick();
 }
 function relayoutKeeping(anchor) {
@@ -416,7 +498,7 @@ function relayoutKeeping(anchor) {
 }
 
 /* ---------- sheets ---------- */
-const sheets = { card: $('card'), rel: $('rel'), leg: $('leg') };
+const sheets = {}; document.querySelectorAll('.sheet').forEach(e => sheets[e.id] = e);
 function openSheet(name) { Object.entries(sheets).forEach(([k, s]) => { s.hidden = k !== name; }); if (name !== 'rel') clearPath(); }
 function closeAll() { Object.values(sheets).forEach(s => s.hidden = true); selected = null; clearPath(); kick(); }
 function clearPath() { if (pathNodes) { pathNodes = null; hotLinks.clear(); kick(); } }
@@ -454,6 +536,7 @@ function showCard(n, via) {
   activeCat = null;
   drawStats();
   const facts = [];
+  if (!via && me) { const yl = youLabel(n); if (yl) facts.push(yl); }
   if (!via) {
     facts.push('Generation ' + (n.depth + 1));
     const ds = descendants(n), kc = kids(n);
@@ -473,6 +556,8 @@ function showCard(n, via) {
   const F = $('facts'); F.innerHTML = '';
   facts.forEach(t => { const d = document.createElement('div'); d.className = 'fact'; d.textContent = t; F.appendChild(d); });
   $('cmp').onclick = () => openRel({ n, via, name: nm });
+  $('meb').style.display = via ? 'none' : '';
+  $('meb').textContent = me === n ? '★ This is me (clear)' : 'This is me';
   $('card').scrollTop = 0;
 }
 function drawStats() {
@@ -621,9 +706,12 @@ svg.addEventListener('pointermove', e => {
   if (pts.size === 1) {
     const dx = e.clientX - p.x, dy = e.clientY - p.y;
     if (down && Math.hypot(e.clientX - down.x, e.clientY - down.y) > 6) down.moved = true;
-    cam.x += dx; cam.y += dy;
+    const L = limits(); let ddx = dx, ddy = dy;
+    if ((cam.x > L.xmax && dx > 0) || (cam.x < L.xmin && dx < 0)) ddx *= .3;
+    if ((cam.y > L.ymax && dy > 0) || (cam.y < L.ymin && dy < 0)) ddy *= .3;
+    cam.x += ddx; cam.y += ddy;
     const dtm = Math.max(1, now - lastT);
-    cam.vx = cam.vx * .6 + (dx / dtm) * .4; cam.vy = cam.vy * .6 + (dy / dtm) * .4;
+    cam.vx = cam.vx * .6 + (ddx / dtm) * .4; cam.vy = cam.vy * .6 + (ddy / dtm) * .4;
     lastT = now;
     p.x = e.clientX; p.y = e.clientY;
   } else {
@@ -681,23 +769,111 @@ function zoomBy(f) {
 }
 $('zi').onclick = () => zoomBy(1.5);
 $('zo').onclick = () => zoomBy(1 / 1.5);
-$('fit').onclick = fit;
-$('x').onclick = closeAll;
-$('rx').onclick = closeAll;
-$('lx').onclick = closeAll;
-$('rl').onclick = () => openRel(null);
-$('lg').onclick = () => { if (sheets.leg.hidden) { selected = null; openSheet('leg'); } else closeAll(); };
+$('fit').onclick = () => { closeAll(); fit(); };
+document.querySelectorAll('.close').forEach(b => b.onclick = closeAll);
 $('all').onclick = () => {
   allOpen = !allOpen;
   nodes.forEach(n => { if (n !== root) n.open = allOpen; });
-  root.open = true; layout(); fit();
+  root.open = true; closeAll(); layout(); fit();
+};
+const toggleSheet = name => { if (sheets[name].hidden) { selected = null; openSheet(name); } else closeAll(); };
+$('bRel').onclick = () => openRel(me ? { n: me, name: me.name } : null);
+$('bLeg').onclick = () => toggleSheet('leg');
+$('bMore').onclick = () => toggleSheet('more');
+$('bShare').onclick = () => toggleSheet('share');
+$('bMe').onclick = () => { if (me) { select(me); toast('This is you ★'); } else { selected = null; openSheet('me'); setTimeout(() => $('mq').focus(), 50); } };
+
+/* ---------- me ---------- */
+function setMe(n) {
+  me = n; try { localStorage.setItem('kashana-me', n ? n.id : ''); } catch (e) {}
+  if (n) toast('Saved: you are ' + n.name + ' ★'); kick();
+}
+$('mq').addEventListener('input', () => {
+  const v = $('mq').value.trim(); if (!v) { $('mres').style.display = 'none'; return; }
+  showHits($('mres'), find(v).filter(h => !h.via), h => { $('mq').value = ''; $('mq').blur(); setMe(h.n); select(h.n); });
+});
+$('meb').onclick = () => { const n = selected; if (!n) return; if (me === n) { setMe(null); toast('Cleared'); showCard(n); } else { setMe(n); showCard(n); } };
+
+/* ---------- suggestions (WhatsApp) ---------- */
+function openSug(about) {
+  openSheet('sug'); selected = null;
+  $('sugabout').textContent = about ? 'About: ' + about : 'General correction or new person';
+  $('sugtxt').value = '';
+  try { $('sugname').value = localStorage.getItem('kashana-sender') || ''; } catch (e) {}
+  sheets.sug._about = about || '';
+}
+$('sugb').onclick = () => openSug(selected ? selected.name : '');
+$('sugm').onclick = () => openSug('');
+$('sugsend').onclick = () => {
+  const t = $('sugtxt').value.trim(), nm = $('sugname').value.trim();
+  if (!t) { toast('Please type what to change first'); return; }
+  try { localStorage.setItem('kashana-sender', nm); } catch (e) {}
+  const msg = 'Kashana suggestion' + (sheets.sug._about ? '\nAbout: ' + sheets.sug._about : '') + '\n\n' + t + (nm ? '\n— ' + nm : '');
+  window.open('https://wa.me/' + WA + '?text=' + encodeURIComponent(msg), '_blank');
+};
+
+/* ---------- share + picture ---------- */
+let picWhole = true;
+document.querySelectorAll('#pscope span').forEach(sp => sp.onclick = () => {
+  picWhole = sp.dataset.w === '1';
+  document.querySelectorAll('#pscope span').forEach(x => x.classList.toggle('on', x === sp));
+});
+function makePicture(whole) {
+  let restore = null;
+  if (whole) { restore = nodes.map(n => n.open); nodes.forEach(n => n.open = true); layout(); }
+  const list = nodes.filter(n => n.vis);
+  const cs = getComputedStyle(document.documentElement), v = k => cs.getPropertyValue(k).trim(), f = k => parseFloat(v(k));
+  let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
+  list.forEach(n => { x0 = Math.min(x0, n.tx); x1 = Math.max(x1, n.tx + n.w); y0 = Math.min(y0, n.ty - H / 2); y1 = Math.max(y1, n.ty + H / 2); });
+  const padX = 30, top = 70, bot = 44, w = x1 - x0 + padX * 2, h = y1 - y0 + top + bot;
+  const sc = Math.min(2, Math.sqrt(12e6 / (w * h)));
+  const cv = document.createElement('canvas'); cv.width = Math.round(w * sc); cv.height = Math.round(h * sc);
+  const c = cv.getContext('2d'); c.scale(sc, sc);
+  c.fillStyle = v('--bg'); c.fillRect(0, 0, w, h);
+  const ox = padX - x0, oy = top - y0;
+  c.lineWidth = 1.6; c.strokeStyle = v('--line');
+  list.forEach(n => { if (!n.parent) return; const p = n.parent, xa = p.tx + p.w + ox, xb = n.tx + ox, mx = (xa + xb) / 2;
+    c.beginPath(); c.moveTo(xa, p.ty + oy); c.bezierCurveTo(mx, p.ty + oy, mx, n.ty + oy, xb, n.ty + oy); c.stroke(); });
+  const pill = (x, y, ww, hh) => { const r = hh / 2; c.beginPath(); c.moveTo(x + r, y); c.lineTo(x + ww - r, y); c.arc(x + ww - r, y + r, r, -Math.PI / 2, Math.PI / 2); c.lineTo(x + r, y + hh); c.arc(x + r, y + r, r, Math.PI / 2, Math.PI * 1.5); c.closePath(); };
+  c.textAlign = 'center'; c.textBaseline = 'middle';
+  list.forEach(n => {
+    const x = n.tx + ox, y = n.ty + oy - H / 2, isRoot = n === root;
+    const hh = n.branch >= 0 ? HUES[n.branch % HUES.length] : 0;
+    pill(x, y, n.w, H);
+    c.fillStyle = isRoot ? v('--rootbg') : `hsl(${hh} ${f('--fs')}% ${n.g === 'm' ? f('--flm') : f('--fl')}%)`; c.fill();
+    c.strokeStyle = isRoot ? v('--rootbg') : `hsl(${hh} ${f('--ss')}% ${f('--sl')}%)`; c.lineWidth = 1.5;
+    c.setLineDash(n.ptr ? [4, 3] : []); c.stroke(); c.setLineDash([]);
+    c.fillStyle = isRoot ? v('--roottx') : v('--ink'); c.font = (n.ptr ? '500' : '600') + ' 14px system-ui,sans-serif';
+    c.fillText(n.label, x + n.w / 2, y + H / 2 + (n.sub ? -7 : 1));
+    if (n.sub) { c.fillStyle = isRoot ? v('--roottx') : v('--mute'); c.font = '11px system-ui,sans-serif'; c.fillText(n.sub, x + n.w / 2, y + H / 2 + 10); }
+  });
+  c.textAlign = 'left'; c.fillStyle = v('--ink'); c.font = '700 26px system-ui,sans-serif'; c.fillText('Kashana', 24, 34);
+  c.fillStyle = v('--mute'); c.font = '12px system-ui,sans-serif'; c.fillText('Family tree · made by Madeeha Anwar', 24, h - 20);
+  if (restore) { nodes.forEach((n, i) => n.open = restore[i]); layout(); }
+  return new Promise(r => cv.toBlob(r, 'image/png'));
+}
+$('saPic').onclick = async () => {
+  toast('Making picture…'); const blob = await makePicture(picWhole);
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'kashana-family-tree.png';
+  document.body.appendChild(a); a.click(); a.remove(); toast('Picture saved');
+};
+$('shPic').onclick = async () => {
+  toast('Making picture…'); const blob = await makePicture(picWhole);
+  const file = new File([blob], 'kashana-family-tree.png', { type: 'image/png' });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) { try { await navigator.share({ files: [file], title: 'Kashana' }); } catch (e) {} }
+  else { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file.name; document.body.appendChild(a); a.click(); a.remove(); toast('Sharing not supported here, so it was saved instead'); }
+};
+$('shLink').onclick = async () => {
+  const url = location.href.split('#')[0];
+  if (navigator.share) { try { await navigator.share({ title: 'Kashana', text: 'Our family tree: Kashana', url }); } catch (e) {} }
+  else { try { await navigator.clipboard.writeText(url); toast('Link copied'); } catch (e) { toast(url); } }
 };
 window.addEventListener('resize', kick);
 
 /* ---------- start ---------- */
 fetch('family.txt', { cache: 'no-cache' })
   .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
-  .then(t => { parse(t); buildLegend(); layout(); tick(performance.now()); fit(); })
+  .then(t => { parse(t); buildLegend(); try { const id = localStorage.getItem('kashana-me'); if (id && byId.get(id)) me = byId.get(id); } catch (e) {} layout(); tick(performance.now()); fit(); })
   .catch(err => {
     const m = $('msg'); m.style.display = 'flex';
     m.textContent = 'Could not load family.txt (' + err.message + '). If testing on your computer, run "npx serve" in this folder instead of opening the file directly.';
