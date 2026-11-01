@@ -5,7 +5,7 @@
 #   list the children only once, under the main side).
 
 Kulsoom + Husband
-  Bade Naana
+  Shafique Ahmad + Raziya Khatoon
     Farookh + Nikhat
       Nazneen + Abrar
         Ifra
