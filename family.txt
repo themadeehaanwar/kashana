@@ -1,108 +1,109 @@
 # KASHANA FAMILY TREE
 # Indent (2 spaces) = child of the line above.   "Name + Spouse" = married couple.
+# Add (m) for male or (f) for female right after a name. Leave it out if unknown.
 # Optional: put [some-id] after a name if two people share a name AND you need to link to one of them.
 # "Name -> Other" = shows Name as a small link that jumps to Other (used when a couple belongs to two branches;
 #   list the children only once, under the main side).
 
-Kulsoom + Husband
-  Shafique Ahmad + Raziya Khatoon
-    Farookh Ahmad + Nikhat
-      Nazneen + Abrar
-        Ifra
-        Umar
-      Nilofer
-    Mushtaque Ahmad
-      Gulrez
-      Areeba
-    Irshad
-      Tabrez + Tehreem
-        Shahzain
-      Danish
-      Ramsha
-    Reyaz Ahmad + Zeba
-      Alvina Reyaz
-      Nabeel Reyaz
-    Razi Ahmad + Sabiha Naaz
-      Aqsa Fatima
+Kulsoom (f) + Husband
+  Shafique Ahmad (m) + Raziya Khatoon
+    Farookh Ahmad (m) + Nikhat
+      Nazneen (f) + Abrar
+        Ifra (f)
+        Umar (m)
+      Nilofer (f)
+    Mushtaque Ahmad (m)
+      Gulrez (m)
+      Areeba (f)
+    Irshad (m)
+      Tabrez (m) + Tehreem
+        Shahzain (m)
+      Danish (m)
+      Ramsha (f)
+    Reyaz Ahmad (m) + Zeba
+      Alvina Reyaz (f)
+      Nabeel Reyaz (m)
+    Razi Ahmad (m) + Sabiha Naaz
+      Aqsa Fatima (f)
     Firri
-      Heba
-    Rufi + Taj
-      Farid
-      Fahad
-      Zoya Fatima
-  Eqbal Ahmad
-    Arshia Ahmad + Faiz Anwar
-      Madeeha Anwar
-      Hamza Faiz Anwar
-      Hamdaan Faiz Anwar
-    Hasan Eqbal + Kahkasha Bano
-      Maryam Hasan
-      Zaid Hasan
-    Hussain Eqbal + Shabnam
-      Fouzan Hussain
-    Alia Ahmad + Ali Ahmad
-      Athar
+      Heba (f)
+    Rufi (m) + Taj
+      Farid (m)
+      Fahad (m)
+      Zoya Fatima (f)
+  Eqbal Ahmad (m)
+    Arshia Ahmad (f) + Faiz Anwar
+      Madeeha Anwar (f)
+      Hamza Faiz Anwar (m)
+      Hamdaan Faiz Anwar (m)
+    Hasan Eqbal (m) + Kahkasha Bano
+      Maryam Hasan (f)
+      Zaid Hasan (m)
+    Hussain Eqbal (m) + Shabnam
+      Fouzan Hussain (m)
+    Alia Ahmad (f) + Ali Ahmad
+      Athar (m)
       Suhan
-    Amber Ahmad + Sarfaraz
-      Aryan
-      Zyan
-    Iffat Ahmad + Irshad Ahmad
-      Innaya Ahmad
-      Izaan Ahmad
-  Shamima Anwar + Khurshaid Anwar
-    Farah Anwar + Afzal Ahmad
-      Heba Ahmad + Wasim
-        Hadi
-      Sana Ahmad
-    Faiz Anwar -> Arshia Ahmad
-    Farrukh Anwar + Sajid
-      Ammar bin Sajid
-      Umar bin Sajid
-      Ummair bin Sajid
-      Usman bin Sajid
-      Ali bin Sajid
-    Fatma Anwar + Manzoor Hashmi
-      Rehan Hashmi
-      Zainab Hashmi
-    Fahad Anwar + Farheen Shayan
-      Kulsoom Maria Anwar
-      Zubaida Mariam Anwar
-  Jamal Ahmad + Afsari Sanober
-    Sharique + Almas
-      Maira
-      Yusuf
-    Shazia + Nesar
-      Armaan
-      Ayeza
-    Sadia + Khalique
-      Laiba
-    Sharib + Shabiya
-      Ibrahim
-    Tarique + Aaliya
-      Aliza
-  Zulfiquar Ahmad
-    Aamir Ahmad
-    Shahla Ahmad
-  Naeema + Yahya
-    Raju + Sumbul
-    Bubli
-    Tasneem + Irshad
-      Ishaan
-      Raiyan
-      Affaan
-    Deeba
-  Shakila + Mukarram
-    Sumbul -> Raju
-    Aariz + Kashif
-    Zeeshu + Fatima
-      Zoheb
-      Zyan
+    Amber Ahmad (f) + Sarfaraz
+      Aryan (m)
+      Zyan (m)
+    Iffat Ahmad (f) + Irshad Ahmad
+      Innaya Ahmad (f)
+      Izaan Ahmad (m)
+  Shamima Anwar (f) + Khurshaid Anwar
+    Farah Anwar (f) + Afzal Ahmad
+      Heba Ahmad (f) + Wasim
+        Hadi (m)
+      Sana Ahmad (f)
+    Faiz Anwar (m) -> Arshia Ahmad
+    Farrukh Anwar (f) + Sajid
+      Ammar bin Sajid (m)
+      Umar bin Sajid (m)
+      Ummair bin Sajid (m)
+      Usman bin Sajid (m)
+      Ali bin Sajid (m)
+    Fatma Anwar (f) + Manzoor Hashmi
+      Rehan Hashmi (m)
+      Zainab Hashmi (f)
+    Fahad Anwar (m) + Farheen Shayan
+      Kulsoom Maria Anwar (f)
+      Zubaida Mariam Anwar (f)
+  Jamal Ahmad (m) + Afsari Sanober
+    Sharique (m) + Almas
+      Maira (f)
+      Yusuf (m)
+    Shazia (f) + Nesar
+      Armaan (m)
+      Ayeza (f)
+    Sadia (f) + Khalique
+      Laiba (f)
+    Sharib (m) + Shabiya
+      Ibrahim (m)
+    Tarique (m) + Aaliya
+      Aliza (f)
+  Zulfiquar Ahmad (m)
+    Aamir Ahmad (m)
+    Shahla Ahmad (f)
+  Naeema (f) + Yahya
+    Raju (m) + Sumbul
+    Bubli (f)
+    Tasneem (f) + Irshad
+      Ishaan (m)
+      Raiyan (m)
+      Affaan (m)
+    Deeba (f)
+  Shakila (f) + Mukarram
+    Sumbul (f) -> Raju
+    Aariz (f) + Kashif
+    Zeeshu (m) + Fatima
+      Zoheb (m)
+      Zyan (m)
   Shaheen
-    Kashif -> Aariz
-    Anam
+    Kashif (m) -> Aariz
+    Anam (f)
   Atti
-    Mahwish
-    Waqar
-    Ayesha
-    Zikra
-  Ashfaq
+    Mahwish (f)
+    Waqar (m)
+    Ayesha (f)
+    Zikra (f)
+  Ashfaq (m)

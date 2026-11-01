@@ -3,74 +3,132 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<meta name="theme-color" content="#faf7f2">
 <title>Kashana</title>
 <style>
-:root{--bg:#faf7f2;--ink:#2b2a33;--mute:#8a8794;--line:#d4cec3}
+:root{--bg:#faf7f2;--ink:#2b2a33;--mute:#8a8794;--line:#d4cec3;--panel:#fff;--panel2:#faf7f2;--hover:#f6f2ea;--shadow:#0002;
+  --fs:65%;--fl:95%;--flm:88%;--ss:42%;--sl:52%;--rootbg:#2b2a33;--roottx:#fff}
+[data-theme=dark]{--bg:#16151b;--ink:#ece9f2;--mute:#9a97a6;--line:#3a3844;--panel:#211f28;--panel2:#1a1920;--hover:#2a2832;--shadow:#0008;
+  --fs:26%;--fl:19%;--flm:26%;--ss:48%;--sl:62%;--rootbg:#ece9f2;--roottx:#16151b}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;overflow:hidden;overscroll-behavior:none}
 svg#c{position:fixed;inset:0;width:100%;height:100%;touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
 svg#c:active{cursor:grabbing}
 .link{fill:none;stroke:var(--line);stroke-width:1.6}
-.node{cursor:pointer}
-.node rect{fill:var(--f);stroke:var(--s);stroke-width:1.5;transition:stroke-width .15s}
+.link.hot{stroke:var(--ink);stroke-width:3}
+.node{--h:0;cursor:pointer}
+.node rect{fill:hsl(var(--h) var(--fs) var(--fl));stroke:hsl(var(--h) var(--ss) var(--sl));stroke-width:1.5}
+.node.m rect{fill:hsl(var(--h) var(--fs) var(--flm))}
 .node text{fill:var(--ink);pointer-events:none;dominant-baseline:central;text-anchor:middle}
 .node .nm{font-size:14px;font-weight:600}
 .node .sp{font-size:11px;fill:var(--mute)}
-.node.root rect{fill:var(--ink);stroke:var(--ink)}
-.node.root .nm{fill:#fff}.node.root .sp{fill:#cfcad8}
+.node.root rect{fill:var(--rootbg);stroke:var(--rootbg)}
+.node.root .nm{fill:var(--roottx)}.node.root .sp{fill:var(--roottx);opacity:.7}
 .node.ptr rect{fill:transparent;stroke-dasharray:4 3}
 .node.ptr .nm{font-weight:500}
 .node.sel rect{stroke-width:3.5}
-.node .bd circle{fill:#fff;stroke:var(--s);stroke-width:1.5}
-.node.root .bd circle{stroke:var(--ink)}
+.node.path rect{stroke-width:4;filter:drop-shadow(0 0 6px hsl(var(--h) 70% 55% / .65))}
+.node .bd circle{fill:var(--panel);stroke:hsl(var(--h) var(--ss) var(--sl));stroke-width:1.5}
+.node.root .bd circle{stroke:var(--rootbg)}
 .node .bd text{font-size:11px;font-weight:700}
-#top{position:fixed;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top) + 10px) 12px 0;display:flex;gap:10px;align-items:flex-start;pointer-events:none}
+#gens{position:fixed;left:0;right:0;top:calc(env(safe-area-inset-top) + 62px);height:0;pointer-events:none}
+#gens div{position:absolute;left:0;top:0;font-size:10px;color:var(--mute);letter-spacing:.08em;text-transform:uppercase;white-space:nowrap;padding:2px 9px;border:1px solid var(--line);border-radius:10px;background:var(--bg);display:none}
+#top{position:fixed;left:0;right:0;top:0;padding:calc(env(safe-area-inset-top) + 10px) 12px 0;display:flex;gap:10px;align-items:flex-start;pointer-events:none;z-index:5}
 #top>*{pointer-events:auto}
 #brand{padding-top:6px;line-height:1.1}
 #brand b{font-size:20px;letter-spacing:.5px}
 #brand span{display:block;font-size:11px;color:var(--mute);margin-top:2px}
 #sbox{flex:1;position:relative;max-width:420px;margin-left:auto}
-#q{width:100%;border:1px solid var(--line);background:#fff;border-radius:22px;padding:11px 16px;font-size:16px;outline:none;color:var(--ink)}
-#q:focus{border-color:#a9a3b8}
-#res{position:absolute;left:0;right:0;top:48px;background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;display:none;max-height:50vh;overflow-y:auto;box-shadow:0 8px 24px #0001}
-#res div{padding:10px 16px;cursor:pointer;border-bottom:1px solid #f0ece5}
-#res div:last-child{border:0}
-#res div:active,#res div:hover{background:#f6f2ea}
-#res small{display:block;color:var(--mute);font-size:12px}
-#tools{position:fixed;right:12px;bottom:calc(env(safe-area-inset-bottom) + 14px);display:flex;flex-direction:column;gap:8px;transition:bottom .25s}
-#tools button{width:42px;height:42px;border-radius:21px;border:1px solid var(--line);background:#fff;font-size:20px;color:var(--ink);cursor:pointer;box-shadow:0 2px 8px #0001}
-#tools button:active{background:#f1ede5}
-#card{position:fixed;left:10px;right:70px;bottom:calc(env(safe-area-inset-bottom) + 12px);background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px 16px;box-shadow:0 8px 28px #0002;max-width:460px;transform:translateY(0);transition:transform .25s,opacity .25s}
-#card[hidden]{display:block;transform:translateY(130%);opacity:0;pointer-events:none}
-#card h2{margin:0;font-size:18px}
-#card .sub{color:var(--mute);font-size:13px;margin-top:2px}
-#card .cz{margin-top:8px;font-size:15px}
-#card .cz b{font-size:20px}
-#chips{display:flex;gap:6px;overflow-x:auto;margin-top:8px;padding-bottom:2px}
-#chips span{white-space:nowrap;border:1px solid var(--line);border-radius:14px;padding:4px 10px;font-size:13px;background:#faf7f2;cursor:pointer}
-#x{position:absolute;right:10px;top:8px;border:0;background:none;font-size:20px;color:var(--mute);cursor:pointer}
-#hint{position:fixed;left:0;right:0;bottom:calc(env(safe-area-inset-bottom) + 22px);text-align:center;color:var(--mute);font-size:13px;pointer-events:none;transition:opacity .6s}
+input.in{width:100%;border:1px solid var(--line);background:var(--panel);color:var(--ink);border-radius:22px;padding:11px 16px;font-size:16px;outline:none}
+input.in:focus{border-color:var(--mute)}
+.hits{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;display:none;max-height:42vh;overflow-y:auto;box-shadow:0 8px 24px var(--shadow)}
+#res{position:absolute;left:0;right:0;top:48px}
+.hits div{padding:10px 16px;cursor:pointer;border-bottom:1px solid var(--hover)}
+.hits div:last-child{border:0}
+.hits div:active,.hits div:hover{background:var(--hover)}
+.hits small{display:block;color:var(--mute);font-size:12px}
+#tools{position:fixed;right:12px;bottom:calc(env(safe-area-inset-bottom) + 14px);display:flex;flex-direction:column;gap:8px;z-index:4}
+#tools button{width:42px;height:42px;border-radius:21px;border:1px solid var(--line);background:var(--panel);font-size:19px;color:var(--ink);cursor:pointer;box-shadow:0 2px 8px var(--shadow)}
+#tools button:active{background:var(--hover)}
+.sheet{position:fixed;background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:14px 16px;box-shadow:0 8px 28px var(--shadow);max-width:460px;overflow-y:auto;transition:transform .25s,opacity .25s;z-index:6}
+.sheet[hidden]{display:block;opacity:0;pointer-events:none}
+#card,#leg{left:10px;right:66px;bottom:calc(env(safe-area-inset-bottom) + 12px);max-height:52vh}
+#card[hidden],#leg[hidden]{transform:translateY(130%)}
+#rel{left:10px;right:10px;top:calc(env(safe-area-inset-top) + 60px);max-height:62vh}
+#rel[hidden]{transform:translateY(-130%)}
+.sheet h2{margin:0;font-size:18px;padding-right:26px}
+.sheet .sub{color:var(--mute);font-size:13px;margin-top:2px}
+.close{position:absolute;right:10px;top:8px;border:0;background:none;font-size:22px;color:var(--mute);cursor:pointer}
+#stats{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px}
+.st{border:1px solid var(--line);background:var(--panel2);color:var(--ink);border-radius:12px;padding:7px 2px;text-align:center;cursor:pointer;font:inherit}
+.st b{display:block;font-size:19px}
+.st span{font-size:10.5px;color:var(--mute)}
+.st.on{border-color:var(--ink)}
+.st.z{opacity:.45}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.chips span{white-space:nowrap;border:1px solid var(--line);border-radius:14px;padding:4px 10px;font-size:13px;background:var(--panel2);cursor:pointer}
+#facts{margin-top:10px}
+.fact{font-size:13.5px;padding:5px 0 5px 10px;border-left:3px solid var(--line);margin-top:6px;line-height:1.35}
+.btn{margin-top:12px;width:100%;border:1px solid var(--ink);background:none;color:var(--ink);border-radius:20px;padding:9px;font:inherit;font-size:14px;cursor:pointer}
+.btn:active{background:var(--hover)}
+.rrow{margin-top:10px}
+.rrow label{font-size:11px;color:var(--mute);text-transform:uppercase;letter-spacing:.08em;margin-left:6px}
+.rrow .hits{display:none;margin-top:6px}
+#rout .fact{border-color:var(--ink)}
+#lbr{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+#lbr span{display:flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:14px;padding:4px 10px;font-size:13px;background:var(--panel2);cursor:pointer}
+#lbr i{width:10px;height:10px;border-radius:5px;display:inline-block}
+.lrow{display:flex;align-items:center;gap:10px;margin-top:9px;font-size:13px}
+.sw{width:46px;height:20px;border-radius:10px;border:1.5px solid hsl(210 var(--ss) var(--sl));flex:none}
+.sw.sm{background:hsl(210 var(--fs) var(--flm))}
+.sw.sf{background:hsl(210 var(--fs) var(--fl))}
+.sw.sp{border-style:dashed}
 #msg{position:fixed;inset:0;display:none;align-items:center;justify-content:center;padding:30px;text-align:center;color:var(--mute)}
 </style>
 </head>
 <body>
 <svg id="c"><g id="world"><g id="links"></g><g id="nodes"></g></g></svg>
+<div id="gens"></div>
 <div id="top">
   <div id="brand"><b>Kashana</b><span id="count"></span></div>
-  <div id="sbox"><input id="q" placeholder="Search a name…" autocomplete="off" autocapitalize="off" spellcheck="false"><div id="res"></div></div>
+  <div id="sbox"><input class="in" id="q" placeholder="Search a name…" autocomplete="off" autocapitalize="off" spellcheck="false"><div class="hits" id="res"></div></div>
 </div>
 <div id="tools">
+  <button id="rl" aria-label="How are we related">⇄</button>
+  <button id="lg" aria-label="Legend">i</button>
+  <button id="th" aria-label="Dark mode">☾</button>
   <button id="zi" aria-label="Zoom in">+</button>
   <button id="zo" aria-label="Zoom out">−</button>
   <button id="fit" aria-label="Fit to screen">⤢</button>
   <button id="all" aria-label="Open or close all">⋯</button>
 </div>
-<div id="card" hidden>
-  <button id="x" aria-label="Close">×</button>
+
+<div class="sheet" id="card" hidden>
+  <button class="close" id="x" aria-label="Close">×</button>
   <h2 id="cn"></h2><div class="sub" id="cs"></div>
-  <div class="cz" id="cz"></div><div id="chips"></div>
+  <div id="stats"></div><div class="chips" id="chips"></div>
+  <div id="facts"></div>
+  <button class="btn" id="cmp">How are we related?</button>
 </div>
-<div id="hint">Drag to move · pinch to zoom · tap a name to open</div>
+
+<div class="sheet" id="rel" hidden>
+  <button class="close" id="rx" aria-label="Close">×</button>
+  <h2>How are we related?</h2>
+  <div class="rrow"><label>Person 1</label><input class="in" id="ra" placeholder="Search a name…" autocomplete="off" spellcheck="false"><div class="hits" id="rla"></div></div>
+  <div class="rrow"><label>Person 2</label><input class="in" id="rb" placeholder="Search a name…" autocomplete="off" spellcheck="false"><div class="hits" id="rlb"></div></div>
+  <div id="rout"></div>
+</div>
+
+<div class="sheet" id="leg" hidden>
+  <button class="close" id="lx" aria-label="Close">×</button>
+  <h2>Legend</h2>
+  <div class="sub">Branches — tap to jump</div>
+  <div id="lbr"></div>
+  <div class="lrow"><i class="sw sm"></i> Son (slightly darker)</div>
+  <div class="lrow"><i class="sw sf"></i> Daughter / unmarked</div>
+  <div class="lrow"><i class="sw sp"></i> Married into another branch (tap to jump)</div>
+  <div class="lrow" style="color:var(--mute)">“Gen” labels at the top show the generation of each column.</div>
+</div>
 <div id="msg"></div>
 
 <script>
@@ -84,10 +142,32 @@ const mctx = document.createElement('canvas').getContext('2d');
 const tw = (s, f) => { mctx.font = f; return mctx.measureText(s).width; };
 const el = (t, a = {}) => { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); return e; };
 const slug = s => s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'x';
+const first = s => s.trim().split(/\s+/)[0].toLowerCase();
 
 let nodes = [], byId = new Map(), root = null, selected = null, allOpen = false;
+let nameCnt = new Map(), maxDepth = 0;
+let pathNodes = null; const hotLinks = new Set();
+const relPick = { a: null, b: null };
+
+/* ---------- theme ---------- */
+function setTheme(t) {
+  document.documentElement.dataset.theme = t;
+  $('th').textContent = t === 'dark' ? '☀' : '☾';
+  document.querySelector('meta[name=theme-color]').content = t === 'dark' ? '#16151b' : '#faf7f2';
+  try { localStorage.setItem('kashana-theme', t); } catch (e) {}
+}
+let saved = null; try { saved = localStorage.getItem('kashana-theme'); } catch (e) {}
+setTheme(saved || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'));
+$('th').onclick = () => setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
 
 /* ---------- parse family.txt ---------- */
+function grab(str) {
+  let g = '', id = null;
+  str = str.replace(/\(([mfMF])\)/, (_, c) => { g = c.toLowerCase(); return ''; });
+  const m = str.match(/\[([^\]]+)\]/);
+  if (m) { id = m[1].trim(); str = str.replace(m[0], ''); }
+  return { name: str.replace(/\s+/g, ' ').trim(), g, id };
+}
 function parse(text) {
   const v = { children: [] };
   const stack = [{ indent: -1, node: v }];
@@ -96,17 +176,16 @@ function parse(text) {
     const t = raw.trim();
     if (!t || t[0] === '#') return;
     const indent = raw.match(/^[ \t]*/)[0].replace(/\t/g, '  ').length;
-    let s = t, ptrRef = null, id = null;
+    let s = t, ptrRef = null;
     if (s.includes('->')) { const p = s.split('->'); s = p[0].trim(); ptrRef = p[1].trim(); }
-    const m = s.match(/\[([^\]]+)\]/);
-    if (m) { id = m[1].trim(); s = s.replace(m[0], '').trim(); }
     const parts = s.split(/\s*\+\s*/);
-    const name = parts[0].trim(), spouse = (parts[1] || '').trim();
+    const A = grab(parts[0]), B = parts[1] ? grab(parts[1]) : { name: '', g: '' };
     while (stack.length > 1 && stack[stack.length - 1].indent >= indent) stack.pop();
     const parent = stack[stack.length - 1].node;
-    let base = id || slug(name), uid = base, c = 1;
+    let base = A.id || slug(A.name), uid = base, c = 1;
     while (byId.has(uid)) uid = base + '-' + (++c);
-    const n = { id: uid, name, spouse, ptrRef, ptr: !!ptrRef, children: [], parent: parent === v ? null : parent, open: false };
+    const n = { id: uid, name: A.name, g: A.g, spouse: B.name, sg: B.g || (A.g === 'm' ? 'f' : A.g === 'f' ? 'm' : ''),
+      ptrRef, ptr: !!ptrRef, children: [], parent: parent === v ? null : parent, open: false };
     byId.set(uid, n);
     parent.children.push(n);
     nodes.push(n);
@@ -115,9 +194,9 @@ function parse(text) {
   root = v.children[0];
   if (!root) throw new Error('family.txt is empty');
   root.parent = null;
-  nodes = [];
+  nodes = []; maxDepth = 0;
   (function walk(n, d, b) {
-    n.depth = d; n.branch = b; nodes.push(n);
+    n.depth = d; n.branch = b; nodes.push(n); maxDepth = Math.max(maxDepth, d);
     n.children.forEach((c, i) => walk(c, d + 1, d === 0 ? i : b));
   })(root, 0, -1);
   nodes.forEach(n => {
@@ -133,26 +212,78 @@ function parse(text) {
     n.open = false;
   });
   root.open = true;
+  nameCnt = new Map();
+  const add = nm => { const k = first(nm); nameCnt.set(k, (nameCnt.get(k) || 0) + 1); };
+  nodes.forEach(n => { if (!n.ptr) add(n.name); if (n.spouse) add(n.spouse); });
   const people = nodes.filter(n => !n.ptr).reduce((a, n) => a + 1 + (n.spouse ? 1 : 0), 0);
   $('count').textContent = people + ' family members';
+  const gens = $('gens'); gens.innerHTML = '';
+  for (let d = 0; d <= maxDepth; d++) { const g = document.createElement('div'); g.textContent = 'Gen ' + (d + 1); gens.appendChild(g); }
 }
 const kids = n => (n.ptr && n.target) ? n.target.children : n.children;
+const parentsOf = x => x.parent ? [x.parent, ...(x.parent.pointers || [])] : [];
+const full = n => n.name + (n.spouse ? ' & ' + n.spouse : '');
+const parentLabel = n => n.parent ? full(n.parent) : '';
 
-/* ---------- cousins ---------- */
-function parentLabel(n) {
-  const p = n.parent; if (!p) return '';
-  return p.name + (p.spouse ? ' & ' + p.spouse : '');
+/* ---------- relationships ---------- */
+function anc(n) {
+  const m = new Map([[n, { d: 0, from: null }]]); let q = [n];
+  while (q.length) {
+    const nx = [];
+    q.forEach(x => parentsOf(x).forEach(p => { if (!m.has(p)) { m.set(p, { d: m.get(x).d + 1, from: x }); nx.push(p); } }));
+    q = nx;
+  }
+  return m;
 }
-function cousinsOf(n) {
-  if (n.ptr && n.target) n = n.target;
-  const P = n.parent; if (!P) return [];
-  const out = new Set();
-  [P, ...(P.pointers || [])].forEach(q => {
-    const g = q.parent; if (!g) return;
-    g.children.forEach(s => { if (s !== q) kids(s).forEach(c => { if (c !== n) out.add(c); }); });
+function relation(A, B) {
+  const a = anc(A), b = anc(B); let best = null;
+  a.forEach((va, node) => {
+    const vb = b.get(node); if (!vb) return;
+    const tot = va.d + vb.d;
+    if (!best || tot < best.tot || (tot === best.tot && Math.max(va.d, vb.d) < Math.max(best.da, best.db)))
+      best = { da: va.d, db: vb.d, tot, lca: node };
   });
-  return [...out];
+  return best && { ...best, a, b };
 }
+function downTo(node, k) {
+  let cur = [node];
+  for (let i = 0; i < k; i++) cur = [...new Set(cur.flatMap(kids))];
+  return cur;
+}
+function cousins(n, d) {
+  const a = anc(n), out = new Set();
+  a.forEach((v, node) => { if (v.d === d + 1) downTo(node, d + 1).forEach(m => { if (m !== n) out.add(m); }); });
+  return [...out].filter(m => { const r = relation(n, m); return r && r.da === d + 1 && r.db === d + 1; });
+}
+function siblings(n) { return n.parent ? n.parent.children.filter(c => c !== n) : []; }
+function descendants(n) {
+  const seen = new Set();
+  (function w(x) { kids(x).forEach(c => { if (!seen.has(c)) { seen.add(c); w(c); } }); })(n);
+  return seen;
+}
+const ORD = ['', 'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh'];
+const ordn = d => ORD[d] || d + 'th';
+const remTxt = r => (r === 1 ? 'once' : r === 2 ? 'twice' : r + ' times') + ' removed';
+function relLabel(da, db, g) { // what B is to A; da = A→common ancestor, db = B→common ancestor
+  const w = (m, f, x) => g === 'm' ? m : g === 'f' ? f : x;
+  const gr = k => 'great-'.repeat(Math.max(0, k));
+  if (da === 0) {
+    if (db === 1) return w('son', 'daughter', 'child');
+    return gr(db - 2) + w('grandson', 'granddaughter', 'grandchild');
+  }
+  if (db === 0) {
+    if (da === 1) return w('father', 'mother', 'parent');
+    return gr(da - 2) + w('grandfather', 'grandmother', 'grandparent');
+  }
+  if (da === 1 && db === 1) return w('brother', 'sister', 'sibling');
+  if (da === 1) {
+    const p = db === 2 ? '' : db === 3 ? 'grand-' : gr(db - 3) + 'grand-';
+    return p + w('nephew', 'niece', 'nephew/niece');
+  }
+  if (db === 1) return gr(da - 2) + w('uncle', 'aunt', 'uncle/aunt');
+  return '';
+}
+const married = (A, B) => (A.pointers || []).includes(B) || (B.pointers || []).includes(A);
 
 /* ---------- layout ---------- */
 function layout() {
@@ -176,13 +307,9 @@ function layout() {
 
 /* ---------- elements ---------- */
 function mk(n) {
-  const g = el('g', { class: 'node' + (n.ptr ? ' ptr' : '') + (n === root ? ' root' : '') });
+  const g = el('g', { class: 'node' + (n.ptr ? ' ptr' : '') + (n === root ? ' root' : '') + (n.g ? ' ' + n.g : '') });
   g.dataset.id = n.id;
-  if (n.branch >= 0) {
-    const h = HUES[n.branch % HUES.length];
-    g.style.setProperty('--s', `hsl(${h} 42% 52%)`);
-    g.style.setProperty('--f', `hsl(${h} 65% 95%)`);
-  }
+  if (n.branch >= 0) g.style.setProperty('--h', HUES[n.branch % HUES.length]);
   g.appendChild(el('rect', { x: 0, y: -H / 2, width: n.w, height: H, rx: H / 2 }));
   const two = !!n.sub;
   const a = el('text', { class: 'nm', x: n.w / 2, y: two ? -7 : 1 }); a.textContent = n.label; g.appendChild(a);
@@ -196,14 +323,12 @@ function mk(n) {
   nodesG.appendChild(g); n.el = g;
   if (n.parent) { n.link = el('path', { class: 'link' }); linksG.appendChild(n.link); }
 }
-function badgeText(n) {
-  if (n.badge) n.badge.textContent = n.open ? '–' : String(countDesc(n));
-}
-function countDesc(n) { return n.children.length; }
+function badgeText(n) { if (n.badge) n.badge.textContent = n.open ? '–' : String(n.children.length); }
 
 /* ---------- camera + animation loop ---------- */
 const cam = { x: 0, y: 0, k: 1, goal: null, vx: 0, vy: 0 };
 let dragging = false, raf = 0, last = 0;
+const genEls = () => $('gens').children;
 function applyCam() { world.setAttribute('transform', `translate(${cam.x} ${cam.y}) scale(${cam.k})`); }
 function kick() { if (!raf) { last = performance.now(); raf = requestAnimationFrame(tick); } }
 function tick(now) {
@@ -211,6 +336,7 @@ function tick(now) {
   const dt = Math.min(0.05, (now - last) / 1000); last = now;
   const k = 1 - Math.exp(-dt * 12);
   let busy = false;
+  const gMin = [], gMax = [];
   for (const n of nodes) {
     if (!n.el) {
       if (!n.vis) continue;
@@ -227,14 +353,22 @@ function tick(now) {
       continue;
     }
     if (n.hid) { n.el.style.display = ''; if (n.link) n.link.style.display = ''; n.hid = false; }
+    if (n.vis) {
+      gMin[n.depth] = Math.min(gMin[n.depth] ?? 1e9, n.x);
+      gMax[n.depth] = Math.max(gMax[n.depth] ?? -1e9, n.x + n.w);
+    }
+    const onPath = pathNodes ? pathNodes.has(n) : true;
     n.el.setAttribute('transform', `translate(${n.x} ${n.y})`);
-    n.el.style.opacity = n.o;
+    n.el.style.opacity = n.o * (onPath ? 1 : .28);
     n.el.classList.toggle('sel', n === selected);
+    n.el.classList.toggle('path', !!pathNodes && onPath);
     badgeText(n);
     if (n.link) {
       const p = n.parent, x1 = p.x + p.w + (p.children.length ? 11 : 0), x2 = n.x, mx = (x1 + x2) / 2;
       n.link.setAttribute('d', `M${x1} ${p.y}C${mx} ${p.y} ${mx} ${n.y} ${x2} ${n.y}`);
-      n.link.style.opacity = n.o;
+      const hot = hotLinks.has(n);
+      n.link.classList.toggle('hot', hot);
+      n.link.style.opacity = n.o * (pathNodes && !hot ? .25 : 1);
     }
   }
   if (cam.goal && !dragging) {
@@ -247,26 +381,30 @@ function tick(now) {
     const f = Math.exp(-dt * 3.2); cam.vx *= f; cam.vy *= f; busy = true;
   }
   applyCam();
+  const ge = genEls(), Wd = window.innerWidth;
+  for (let d = 0; d < ge.length; d++) {
+    if (gMin[d] === undefined) { ge[d].style.display = 'none'; continue; }
+    const sx = cam.x + ((gMin[d] + gMax[d]) / 2) * cam.k;
+    ge[d].style.display = (sx < -50 || sx > Wd + 50) ? 'none' : 'block';
+    ge[d].style.transform = `translate(calc(${sx}px - 50%),0)`;
+  }
   if (busy || dragging) kick();
 }
 
 /* ---------- framing ---------- */
 const W = () => window.innerWidth, Hh = () => window.innerHeight;
-function bounds() {
+function fitNodes(list, padT, maxK) {
   let x0 = 1e9, y0 = 1e9, x1 = -1e9, y1 = -1e9;
-  nodes.forEach(n => { if (!n.vis) return; x0 = Math.min(x0, n.tx); x1 = Math.max(x1, n.tx + n.w + 12); y0 = Math.min(y0, n.ty - H / 2); y1 = Math.max(y1, n.ty + H / 2); });
-  return { x0, y0, x1, y1 };
-}
-function fit() {
-  const b = bounds(), padT = 80, padB = 30, padX = 20;
-  const bw = b.x1 - b.x0, bh = b.y1 - b.y0;
-  const k = Math.max(.15, Math.min(1, (W() - padX * 2) / bw, (Hh() - padT - padB) / bh));
-  cam.goal = { k, x: (W() - bw * k) / 2 - b.x0 * k, y: padT + (Hh() - padT - padB - bh * k) / 2 - b.y0 * k };
+  list.forEach(n => { x0 = Math.min(x0, n.tx); x1 = Math.max(x1, n.tx + n.w + 12); y0 = Math.min(y0, n.ty - H / 2); y1 = Math.max(y1, n.ty + H / 2); });
+  const padB = 30, padX = 20, bw = x1 - x0, bh = y1 - y0;
+  const k = Math.max(.15, Math.min(maxK, (W() - padX * 2) / bw, (Hh() - padT - padB) / bh));
+  cam.goal = { k, x: (W() - bw * k) / 2 - x0 * k, y: padT + (Hh() - padT - padB - bh * k) / 2 - y0 * k };
   cam.vx = cam.vy = 0; kick();
 }
+function fit() { fitNodes(nodes.filter(n => n.vis), 112, 1); }
 function centerOn(n) {
   const k = Math.min(1.4, Math.max(cam.goal ? cam.goal.k : cam.k, .85));
-  cam.goal = { k, x: W() / 2 - (n.tx + n.w / 2) * k, y: Hh() * .38 - n.ty * k };
+  cam.goal = { k, x: W() / 2 - (n.tx + n.w / 2) * k, y: Hh() * .34 - n.ty * k };
   cam.vx = cam.vy = 0; kick();
 }
 function relayoutKeeping(anchor) {
@@ -277,46 +415,201 @@ function relayoutKeeping(anchor) {
   kick();
 }
 
+/* ---------- sheets ---------- */
+const sheets = { card: $('card'), rel: $('rel'), leg: $('leg') };
+function openSheet(name) { Object.entries(sheets).forEach(([k, s]) => { s.hidden = k !== name; }); if (name !== 'rel') clearPath(); }
+function closeAll() { Object.values(sheets).forEach(s => s.hidden = true); selected = null; clearPath(); kick(); }
+function clearPath() { if (pathNodes) { pathNodes = null; hotLinks.clear(); kick(); } }
+
 /* ---------- selection + card ---------- */
-function reveal(n) {
-  let a = n.parent, changed = false;
-  while (a) { if (!a.open) { a.open = true; changed = true; } a = a.parent; }
-  layout();
-}
+function openAnc(n) { let a = n.parent; while (a) { a.open = true; a = a.parent; } }
+function reveal(n) { openAnc(n); layout(); }
 function select(n, via) {
-  if (n.ptr && n.target) n = n.target;
   reveal(n); selected = n;
   showCard(n, via);
   centerOn(n); kick();
 }
+let cardCats = [], activeCat = null;
 function showCard(n, via) {
-  $('cn').textContent = via || (n.name + (n.spouse ? ' & ' + n.spouse : ''));
-  if (via) {
-    $('cs').textContent = 'Married to ' + n.name; $('cz').textContent = n.children.length ? n.children.length + ' ' + (n.children.length > 1 ? 'children' : 'child') : '';
-    $('chips').innerHTML = '';
-  } else {
-    $('cs').textContent = n.parent ? 'Child of ' + parentLabel(n) : 'Founders of the family';
-    const c = cousinsOf(n);
-    const cz = $('cz'); cz.innerHTML = '';
-    if (n.parent && n.parent.parent) {
-      const b = document.createElement('b'); b.textContent = c.length;
-      cz.append(b, ' first cousin' + (c.length === 1 ? '' : 's'));
-    } else if (n.children.length) cz.textContent = n.children.length + ' ' + (n.children.length > 1 ? 'children' : 'child');
-    const ch = $('chips'); ch.innerHTML = '';
-    c.forEach(x => { const s = document.createElement('span'); s.textContent = x.name; s.onclick = () => select(x); ch.appendChild(s); });
+  openSheet('card');
+  const g = via ? n.sg : n.g;
+  $('cn').textContent = via || n.name;
+  const subs = [];
+  if (via) subs.push('Married to ' + n.name);
+  else {
+    subs.push(n.parent ? 'Child of ' + parentLabel(n) : 'Founders of the family');
+    if (n.ptr && n.target) subs.push('Married to ' + n.target.name);
+    else if (n.spouse) subs.push('Married to ' + n.spouse);
   }
-  $('card').hidden = false;
-  $('tools').style.bottom = '';
+  $('cs').textContent = subs.join(' · ');
+  const nm = via || n.name;
+  const base = via ? n : n;
+  cardCats = [];
+  if (!via) {
+    cardCats.push({ k: 'c1', t: '1st cousins', l: cousins(n, 1) });
+    cardCats.push({ k: 'c2', t: '2nd cousins', l: cousins(n, 2) });
+    cardCats.push({ k: 'sib', t: 'Siblings', l: siblings(n) });
+  }
+  cardCats.push({ k: 'kid', t: 'Children', l: kids(n) });
+  activeCat = null;
+  drawStats();
+  const facts = [];
+  if (!via) {
+    facts.push('Generation ' + (n.depth + 1));
+    const ds = descendants(n), kc = kids(n);
+    if (ds.size) {
+      const gk = new Set(kc.flatMap(kids)).size;
+      facts.push((gk ? gk + ' grandchild' + (gk > 1 ? 'ren' : '') + ' · ' : '') + ds.size + ' descendant' + (ds.size > 1 ? 's' : '') + ' in total');
+    }
+    const pr = g === 'f' ? 'her' : g === 'm' ? 'his' : 'their';
+    const sp = n.ptr ? (n.target ? [n.target] : []) : (n.pointers || []);
+    sp.forEach(p => {
+      const r = relation(n, p);
+      if (r && r.da >= 2 && r.db >= 2) facts.push(`Married to ${p.name}, who is also ${pr} ${ordn(Math.min(r.da, r.db) - 1)} cousin${r.da !== r.db ? ' ' + remTxt(Math.abs(r.da - r.db)) : ''}.`);
+    });
+  }
+  const tn = (nameCnt.get(first(nm)) || 1) - 1;
+  if (tn > 0) facts.push(`Shares the name “${nm.split(/\s+/)[0]}” with ${tn} other${tn > 1 ? 's' : ''} in the family.`);
+  const F = $('facts'); F.innerHTML = '';
+  facts.forEach(t => { const d = document.createElement('div'); d.className = 'fact'; d.textContent = t; F.appendChild(d); });
+  $('cmp').onclick = () => openRel({ n, via, name: nm });
+  $('card').scrollTop = 0;
 }
-function closeCard() { selected = null; $('card').hidden = true; kick(); }
+function drawStats() {
+  const S = $('stats'); S.innerHTML = '';
+  S.style.gridTemplateColumns = `repeat(${cardCats.length},1fr)`;
+  cardCats.forEach(c => {
+    const b = document.createElement('button');
+    b.className = 'st' + (c.l.length ? '' : ' z') + (activeCat === c.k ? ' on' : '');
+    b.innerHTML = '<b></b><span></span>'; b.firstChild.textContent = c.l.length; b.lastChild.textContent = c.t;
+    b.onclick = () => { if (!c.l.length) return; activeCat = activeCat === c.k ? null : c.k; drawStats(); };
+    S.appendChild(b);
+  });
+  const ch = $('chips'); ch.innerHTML = '';
+  const c = cardCats.find(x => x.k === activeCat);
+  if (c) c.l.forEach(x => { const s = document.createElement('span'); s.textContent = x.name; s.onclick = () => select(x); ch.appendChild(s); });
+}
+
+/* ---------- search ---------- */
+function find(q, blood) {
+  q = q.trim().toLowerCase(); if (!q) return [];
+  const hits = [];
+  nodes.forEach(n => {
+    if (n.name.toLowerCase().includes(q)) hits.push({ n, label: n.name, sub: n.parent ? 'Child of ' + parentLabel(n) : 'Founders', s: n.name.toLowerCase().startsWith(q) ? 0 : 1 });
+    if (!n.ptr && n.spouse && n.spouse.toLowerCase().includes(q) && !(n.pointers || []).some(p => p.name.toLowerCase() === n.spouse.toLowerCase()))
+      hits.push({ n, label: n.spouse, via: n.spouse, sub: 'Married to ' + n.name, s: n.spouse.toLowerCase().startsWith(q) ? 0 : 1 });
+  });
+  hits.sort((a, b) => a.s - b.s);
+  return hits.slice(0, 8);
+}
+function showHits(box, hits, pick) {
+  box.innerHTML = '';
+  hits.forEach(h => {
+    const d = document.createElement('div'); d.textContent = h.label;
+    const s = document.createElement('small'); s.textContent = h.sub; d.appendChild(s);
+    d.onclick = () => { box.style.display = 'none'; pick(h); };
+    box.appendChild(d);
+  });
+  if (!hits.length) { const d = document.createElement('div'); d.textContent = 'No match'; box.appendChild(d); }
+  box.style.display = 'block';
+}
+$('q').addEventListener('input', () => {
+  const v = $('q').value.trim();
+  if (!v) { $('res').style.display = 'none'; return; }
+  showHits($('res'), find(v), h => { $('q').value = ''; $('q').blur(); select(h.n, h.via); });
+});
+
+/* ---------- relationship finder ---------- */
+function openRel(a) {
+  openSheet('rel'); selected = null;
+  relPick.a = a || null; relPick.b = null;
+  $('ra').value = a ? a.name : ''; $('rb').value = '';
+  $('rout').innerHTML = ''; clearPath();
+  setTimeout(() => (a ? $('rb') : $('ra')).focus(), 50);
+}
+function setupPicker(inp, list, key) {
+  inp.addEventListener('input', () => {
+    relPick[key] = null; $('rout').innerHTML = ''; clearPath();
+    const v = inp.value.trim();
+    if (!v) { list.style.display = 'none'; return; }
+    showHits(list, find(v).slice(0, 5), h => {
+      relPick[key] = { n: h.n, via: h.via, name: h.label }; inp.value = h.label; inp.blur(); showRelation();
+    });
+  });
+}
+setupPicker($('ra'), $('rla'), 'a'); setupPicker($('rb'), $('rlb'), 'b');
+function fact(t) { const d = document.createElement('div'); d.className = 'fact'; d.textContent = t; return d; }
+function showRelation() {
+  const { a, b } = relPick, out = $('rout'); out.innerHTML = '';
+  clearPath();
+  if (!a || !b) return;
+  const A = a.n, B = b.n, lines = [];
+  if (A === B) {
+    lines.push(a.via && b.via ? 'That is the same person.' : (a.via || b.via) ? `${a.via || b.via} is married to ${A.name}.` : 'That is the same person.');
+    lines.forEach(t => out.appendChild(fact(t)));
+    return;
+  }
+  if (a.via) lines.push(`${a.via} is married to ${A.name}.`);
+  if (b.via) lines.push(`${b.via} is married to ${B.name}.`);
+  const r = relation(A, B);
+  if (!r) lines.push('No blood link found between them.');
+  else {
+    const { da, db } = r;
+    if (da >= 2 && db >= 2) {
+      const d = Math.min(da, db) - 1, rem = Math.abs(da - db);
+      lines.push(`${A.name} and ${B.name} are ${ordn(d)} cousins${rem ? ' ' + remTxt(rem) : ''}.`);
+    } else {
+      lines.push(`${B.name} is ${A.name}’s ${relLabel(da, db, B.g)}.`);
+      lines.push(`${A.name} is ${B.name}’s ${relLabel(db, da, A.g)}.`);
+    }
+    if (da > 0 && db > 0) lines.push('Closest shared ancestors: ' + (r.lca.ptr ? r.lca.name : full(r.lca)) + '.');
+    if (married(A, B)) lines.push('They are also married to each other.');
+    const set = new Set(); hotLinks.clear();
+    // walk from the common ancestor back down to each person
+    const walkDown = (m, person) => {
+      let x = r.lca; const seq = [x];
+      while (x !== person) { // follow 'from' links: from(x) is the child on the way to person
+        x = m.get(x).from; seq.push(x);
+      }
+      for (let i = 0; i < seq.length; i++) {
+        set.add(seq[i]);
+        if (i > 0) {
+          const child = seq[i], par = seq[i - 1];
+          if (child.parent === par) hotLinks.add(child);
+          else { if (par.ptr && par.target) set.add(par.target); }
+        }
+      }
+    };
+    walkDown(r.a, A); walkDown(r.b, B);
+    set.forEach(n => openAnc(n)); layout();
+    pathNodes = set;
+    // wait one frame so the sheet has its final height
+    requestAnimationFrame(() => fitNodes([...set], Math.min(Hh() * .62, $('rel').getBoundingClientRect().bottom + 16), 1.1));
+  }
+  lines.forEach(t => out.appendChild(fact(t)));
+  kick();
+}
+
+/* ---------- legend ---------- */
+function buildLegend() {
+  const br = $('lbr'); br.innerHTML = '';
+  root.children.forEach((c, i) => {
+    if (c.ptr) return;
+    const b = document.createElement('span'), dot = document.createElement('i');
+    dot.style.background = `hsl(${HUES[i % HUES.length]} 42% 52%)`;
+    b.append(dot, c.name);
+    b.onclick = () => { c.open = true; select(c); };
+    br.appendChild(b);
+  });
+}
 
 /* ---------- gestures ---------- */
 const pts = new Map(); let down = null, prevD = 0, prevM = null, lastT = 0;
-const hint = $('hint'); const hideHint = () => { hint.style.opacity = 0; };
 svg.addEventListener('pointerdown', e => {
   svg.setPointerCapture(e.pointerId);
   pts.set(e.pointerId, { x: e.clientX, y: e.clientY });
-  cam.goal = null; cam.vx = cam.vy = 0; dragging = true; hideHint();
+  cam.goal = null; cam.vx = cam.vy = 0; dragging = true;
+  if (document.activeElement && document.activeElement.blur) document.activeElement.blur();
   if (pts.size === 1) down = { x: e.clientX, y: e.clientY, t: performance.now(), moved: false };
   else if (down) down.moved = true;
   if (pts.size === 2) { const [a, b] = [...pts.values()]; prevD = Math.hypot(a.x - b.x, a.y - b.y); prevM = { x: (a.x + b.x) / 2, y: (a.y + b.y) / 2 }; }
@@ -361,17 +654,17 @@ function up(e) {
 svg.addEventListener('pointerup', up);
 svg.addEventListener('pointercancel', up);
 svg.addEventListener('wheel', e => {
-  e.preventDefault(); cam.goal = null; hideHint();
+  e.preventDefault(); cam.goal = null;
   const nk = Math.min(3, Math.max(.15, cam.k * Math.exp(-e.deltaY * (e.ctrlKey ? .01 : .0015))));
   const wx = (e.clientX - cam.x) / cam.k, wy = (e.clientY - cam.y) / cam.k;
-  cam.k = nk; cam.x = e.clientX - wx * nk; cam.y = e.clientY - wy * nk; applyCam();
+  cam.k = nk; cam.x = e.clientX - wx * nk; cam.y = e.clientY - wy * nk; applyCam(); kick();
 }, { passive: false });
 ['gesturestart', 'gesturechange'].forEach(t => document.addEventListener(t, e => e.preventDefault()));
 
 function tap(x, y) {
-  $('res').style.display = 'none'; $('q').blur();
+  $('res').style.display = 'none';
   const t = document.elementFromPoint(x, y), g = t && t.closest && t.closest('.node');
-  if (!g) { if (selected) closeCard(); return; }
+  if (!g) { if (!sheets.rel.hidden) return; closeAll(); return; }
   const n = byId.get(g.dataset.id); if (!n) return;
   if (n.ptr && n.target) { select(n.target); return; }
   selected = n;
@@ -379,29 +672,6 @@ function tap(x, y) {
   showCard(n);
   kick();
 }
-
-/* ---------- search ---------- */
-function runSearch() {
-  const q = $('q').value.trim().toLowerCase(), box = $('res');
-  box.innerHTML = '';
-  if (!q) { box.style.display = 'none'; return; }
-  const hits = [];
-  nodes.forEach(n => {
-    if (n.ptr) return;
-    if (n.name.toLowerCase().includes(q)) hits.push({ n, label: n.name, sub: n.parent ? 'Child of ' + parentLabel(n) : 'Founders', s: n.name.toLowerCase().startsWith(q) ? 0 : 1 });
-    if (n.spouse && n.spouse.toLowerCase().includes(q)) hits.push({ n, label: n.spouse, via: n.spouse, sub: 'Married to ' + n.name, s: n.spouse.toLowerCase().startsWith(q) ? 0 : 1 });
-  });
-  hits.sort((a, b) => a.s - b.s);
-  hits.slice(0, 8).forEach(h => {
-    const d = document.createElement('div'); d.textContent = h.label;
-    const s = document.createElement('small'); s.textContent = h.sub; d.appendChild(s);
-    d.onclick = () => { box.style.display = 'none'; $('q').value = ''; $('q').blur(); select(h.n, h.via); };
-    box.appendChild(d);
-  });
-  if (!hits.length) { const d = document.createElement('div'); d.textContent = 'No match'; box.appendChild(d); }
-  box.style.display = 'block';
-}
-$('q').addEventListener('input', runSearch);
 
 /* ---------- buttons ---------- */
 function zoomBy(f) {
@@ -412,7 +682,11 @@ function zoomBy(f) {
 $('zi').onclick = () => zoomBy(1.5);
 $('zo').onclick = () => zoomBy(1 / 1.5);
 $('fit').onclick = fit;
-$('x').onclick = closeCard;
+$('x').onclick = closeAll;
+$('rx').onclick = closeAll;
+$('lx').onclick = closeAll;
+$('rl').onclick = () => openRel(null);
+$('lg').onclick = () => { if (sheets.leg.hidden) { selected = null; openSheet('leg'); } else closeAll(); };
 $('all').onclick = () => {
   allOpen = !allOpen;
   nodes.forEach(n => { if (n !== root) n.open = allOpen; });
@@ -423,7 +697,7 @@ window.addEventListener('resize', kick);
 /* ---------- start ---------- */
 fetch('family.txt', { cache: 'no-cache' })
   .then(r => { if (!r.ok) throw new Error('HTTP ' + r.status); return r.text(); })
-  .then(t => { parse(t); layout(); tick(performance.now()); fit(); setTimeout(hideHint, 6000); })
+  .then(t => { parse(t); buildLegend(); layout(); tick(performance.now()); fit(); })
   .catch(err => {
     const m = $('msg'); m.style.display = 'flex';
     m.textContent = 'Could not load family.txt (' + err.message + '). If testing on your computer, run "npx serve" in this folder instead of opening the file directly.';
