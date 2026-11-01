@@ -154,14 +154,14 @@ textarea.in{border-radius:16px;min-height:90px;resize:vertical;font-family:inher
   <button class="btn" id="all">Open / close everyone</button>
   <button class="btn" id="thm">Dark mode</button>
   <button class="btn" id="sugm">Suggest a correction or new person</button>
-  <div class="sub" style="text-align:center;margin-top:14px">Kashana · made by Madeeha Anwar</div>
+  <div class="sub" style="text-align:center;margin-top:14px">Kashana · page created by Madeeha Anwar</div>
 </div>
 
 <div class="sheet" id="sug" hidden>
   <button class="close" aria-label="Close">×</button>
   <h2>Suggest a correction</h2>
   <div class="sub" id="sugabout"></div>
-  <textarea class="in" id="sugtxt" placeholder="What is wrong, or who should be added? e.g. “Add Zara (daughter of Sajid & Farrukh)”"></textarea>
+  <textarea class="in" id="sugtxt" placeholder="Type your correction or new person here"></textarea>
   <input class="in" id="sugname" placeholder="Your name" autocomplete="off">
   <button class="btn" id="sugsend">Send on WhatsApp</button>
   <div class="sub" style="margin-top:8px">It opens WhatsApp with the message ready. Nothing changes on the tree until it is approved.</div>
@@ -183,7 +183,7 @@ textarea.in{border-radius:16px;min-height:90px;resize:vertical;font-family:inher
     <button id="bShare"><i>⤴</i><span>Share</span></button>
     <button id="bMore"><i>⋯</i><span>More</span></button>
   </div>
-  <div id="credit">Kashana · made by <b>Madeeha Anwar</b></div>
+  <div id="credit">Kashana · page created by <b>Madeeha Anwar</b></div>
 </div>
 <div id="toast"></div>
 <div id="msg"></div>
@@ -322,34 +322,59 @@ function descendants(n) {
 }
 const ORD = ['', 'first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh'];
 const ordn = d => ORD[d] || d + 'th';
-const remTxt = r => (r === 1 ? 'once' : r === 2 ? 'twice' : r + ' times') + ' removed';
-function relLabel(da, db, g) { // what B is to A; da = A→common ancestor, db = B→common ancestor
+const SPOUSE = { Chachu: 'Chachi', Phupi: 'Phupa', Khaala: 'Khaalu', Maamu: 'Maami' };
+function firstStep(m, A, lca) { if (lca === A) return null; let x = lca; while (m.get(x).from !== A) x = m.get(x).from; return x; }
+const rev = r => ({ da: r.db, db: r.da, a: r.b, b: r.a, lca: r.lca });
+// what B is to A, in our family's words (r = relation(A, B))
+function kinLabel(A, B, r) {
+  const { da, db } = r, g = B.g, diff = da - db;
   const w = (m, f, x) => g === 'm' ? m : g === 'f' ? f : x;
   const gr = k => 'great-'.repeat(Math.max(0, k));
-  if (da === 0) {
-    if (db === 1) return w('son', 'daughter', 'child');
-    return gr(db - 2) + w('grandson', 'granddaughter', 'grandchild');
-  }
+  if (da === 0) return db === 1 ? w('son', 'daughter', 'child') : gr(db - 2) + w('grandson', 'granddaughter', 'grandchild');
   if (db === 0) {
     if (da === 1) return w('father', 'mother', 'parent');
+    const s = (firstStep(r.a, A, r.lca) || {}).g;
+    if (da === 2 && s === 'm') return w('Daada', 'Daadi', 'Daada/Daadi');
+    if (da === 2 && s === 'f') return w('Naana', 'Naani', 'Naana/Naani');
     return gr(da - 2) + w('grandfather', 'grandmother', 'grandparent');
   }
-  if (da === 1 && db === 1) return w('brother', 'sister', 'sibling');
-  if (da === 1) {
-    const p = db === 2 ? '' : db === 3 ? 'grand-' : gr(db - 3) + 'grand-';
-    return p + w('nephew', 'niece', 'nephew/niece');
+  if (da === db) return da === 1 ? w('brother', 'sister', 'sibling') : ordn(da - 1) + ' cousin';
+  if (diff === 1) {
+    const s = (firstStep(r.a, A, r.lca) || {}).g;
+    if (s === 'm') return w('Chachu', 'Phupi', 'Chachu/Phupi');
+    if (s === 'f') return w('Maamu', 'Khaala', 'Maamu/Khaala');
+    return w('uncle', 'aunt', 'uncle/aunt');
   }
-  if (db === 1) return gr(da - 2) + w('uncle', 'aunt', 'uncle/aunt');
-  return '';
+  if (diff === -1) {
+    const s = (firstStep(r.b, B, r.lca) || {}).g;
+    if (s === 'm') return w('Bhateeja', 'Bhateeji', 'Bhateeja/Bhateeji');
+    if (s === 'f') return w('Bhaanja', 'Bhaanji', 'Bhaanja/Bhaanji');
+    return w('nephew', 'niece', 'nephew/niece');
+  }
+  if (diff === 2) {
+    const s = (firstStep(r.a, A, r.lca) || {}).g;
+    if (s === 'm') return w('Daada', 'Daadi', 'Daada/Daadi');
+    if (s === 'f') return w('Naana', 'Naani', 'Naana/Naani');
+  }
+  if (diff > 1) return gr(diff - 2) + 'grand-' + w('uncle', 'aunt', 'uncle/aunt');
+  return gr(-diff - 2) + 'grand-' + w('nephew', 'niece', 'nephew/niece');
 }
-function youLabel(B) {
-  if (B === me) return 'That’s you ★';
+function elders(n) { // aunts & uncles (parents' siblings and cousins), nieces & nephews
+  const up = [], down = [];
+  nodes.forEach(m => {
+    if (m === n) return;
+    const r = relation(n, m); if (!r || r.da === 0 || r.db === 0) return;
+    if (r.da - r.db === 1 && r.db <= 3) up.push({ n: m, tag: kinLabel(n, m, r) });
+    else if (r.db - r.da === 1 && r.da <= 3) down.push({ n: m, tag: kinLabel(n, m, r) });
+  });
+  return { up, down };
+}
+function youLabel(B, via) {
+  if (!via && B === me) return 'That’s you ★';
   const r = relation(me, B); if (!r) return null;
-  const { da, db } = r; let t;
-  if (da >= 2 && db >= 2) { const d = Math.min(da, db) - 1, rem = Math.abs(da - db); t = `your ${ordn(d)} cousin${rem ? ' ' + remTxt(rem) : ''}`; }
-  else t = 'your ' + relLabel(da, db, B.g);
-  if (married(me, B)) t += ' (and married to you)';
-  return `${B.name} is ${t}.`;
+  const lab = kinLabel(me, B, r);
+  if (via) { const st = SPOUSE[lab]; return B === me ? `${via} is married to you.` : st ? `${via} is your ${st}.` : `${via} is married to your ${lab}, ${B.name}.`; }
+  return `${B.name} is your ${lab}${married(me, B) ? ' (and married to you)' : ''}.`;
 }
 const married = (A, B) => (A.pointers || []).includes(B) || (B.pointers || []).includes(A);
 
@@ -533,10 +558,11 @@ function showCard(n, via) {
     cardCats.push({ k: 'sib', t: 'Siblings', l: siblings(n) });
   }
   cardCats.push({ k: 'kid', t: 'Children', l: kids(n) });
+  if (!via) { const e = elders(n); cardCats.push({ k: 'up', t: 'Aunts & uncles', l: e.up }); cardCats.push({ k: 'dn', t: 'Nieces & nephews', l: e.down }); }
   activeCat = null;
   drawStats();
   const facts = [];
-  if (!via && me) { const yl = youLabel(n); if (yl) facts.push(yl); }
+  if (me) { const yl = youLabel(n, via); if (yl) facts.push(yl); }
   if (!via) {
     facts.push('Generation ' + (n.depth + 1));
     const ds = descendants(n), kc = kids(n);
@@ -548,7 +574,7 @@ function showCard(n, via) {
     const sp = n.ptr ? (n.target ? [n.target] : []) : (n.pointers || []);
     sp.forEach(p => {
       const r = relation(n, p);
-      if (r && r.da >= 2 && r.db >= 2) facts.push(`Married to ${p.name}, who is also ${pr} ${ordn(Math.min(r.da, r.db) - 1)} cousin${r.da !== r.db ? ' ' + remTxt(Math.abs(r.da - r.db)) : ''}.`);
+      if (r && r.da >= 2 && r.db >= 2) facts.push(`Married to ${p.name}, who is also ${pr} ${kinLabel(n, p, r)}.`);
     });
   }
   const tn = (nameCnt.get(first(nm)) || 1) - 1;
@@ -562,7 +588,7 @@ function showCard(n, via) {
 }
 function drawStats() {
   const S = $('stats'); S.innerHTML = '';
-  S.style.gridTemplateColumns = `repeat(${cardCats.length},1fr)`;
+  S.style.gridTemplateColumns = `repeat(${cardCats.length > 4 ? 3 : cardCats.length},1fr)`;
   cardCats.forEach(c => {
     const b = document.createElement('button');
     b.className = 'st' + (c.l.length ? '' : ' z') + (activeCat === c.k ? ' on' : '');
@@ -572,7 +598,7 @@ function drawStats() {
   });
   const ch = $('chips'); ch.innerHTML = '';
   const c = cardCats.find(x => x.k === activeCat);
-  if (c) c.l.forEach(x => { const s = document.createElement('span'); s.textContent = x.name; s.onclick = () => select(x); ch.appendChild(s); });
+  if (c) c.l.forEach(x => { const m = x.n || x; const s = document.createElement('span'); s.textContent = x.tag ? m.name + ' · ' + x.tag : m.name; s.onclick = () => select(m); ch.appendChild(s); });
 }
 
 /* ---------- search ---------- */
@@ -640,13 +666,13 @@ function showRelation() {
   if (!r) lines.push('No blood link found between them.');
   else {
     const { da, db } = r;
-    if (da >= 2 && db >= 2) {
-      const d = Math.min(da, db) - 1, rem = Math.abs(da - db);
-      lines.push(`${A.name} and ${B.name} are ${ordn(d)} cousins${rem ? ' ' + remTxt(rem) : ''}.`);
-    } else {
-      lines.push(`${B.name} is ${A.name}’s ${relLabel(da, db, B.g)}.`);
-      lines.push(`${A.name} is ${B.name}’s ${relLabel(db, da, A.g)}.`);
+    if (da === db && da >= 2) lines.push(`${A.name} and ${B.name} are ${kinLabel(A, B, r)}s.`);
+    else {
+      lines.push(`${B.name} is ${A.name}’s ${kinLabel(A, B, r)}.`);
+      lines.push(`${A.name} is ${B.name}’s ${kinLabel(B, A, rev(r))}.`);
     }
+    if (a.via) { const st = SPOUSE[kinLabel(B, A, rev(r))]; if (st) lines.push(`So ${a.via} is ${B.name}’s ${st}.`); }
+    if (b.via) { const st = SPOUSE[kinLabel(A, B, r)]; if (st) lines.push(`So ${b.via} is ${A.name}’s ${st}.`); }
     if (da > 0 && db > 0) lines.push('Closest shared ancestors: ' + (r.lca.ptr ? r.lca.name : full(r.lca)) + '.');
     if (married(A, B)) lines.push('They are also married to each other.');
     const set = new Set(); hotLinks.clear();
@@ -848,7 +874,7 @@ function makePicture(whole) {
     if (n.sub) { c.fillStyle = isRoot ? v('--roottx') : v('--mute'); c.font = '11px system-ui,sans-serif'; c.fillText(n.sub, x + n.w / 2, y + H / 2 + 10); }
   });
   c.textAlign = 'left'; c.fillStyle = v('--ink'); c.font = '700 26px system-ui,sans-serif'; c.fillText('Kashana', 24, 34);
-  c.fillStyle = v('--mute'); c.font = '12px system-ui,sans-serif'; c.fillText('Family tree · made by Madeeha Anwar', 24, h - 20);
+  c.fillStyle = v('--mute'); c.font = '12px system-ui,sans-serif'; c.fillText('Kashana family tree · page created by Madeeha Anwar', 24, h - 20);
   if (restore) { nodes.forEach((n, i) => n.open = restore[i]); layout(); }
   return new Promise(r => cv.toBlob(r, 'image/png'));
 }
