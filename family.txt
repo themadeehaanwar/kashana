@@ -25,9 +25,9 @@ Kulsoom (f) + Husband
       Nabeel Reyaz (m)
     Razi Ahmad (m) + Sabiha Naaz
       Aqsa Fatima (f)
-    Firri
+    Firri (m)
       Heba (f)
-    Rufi (m) + Taj
+    Rufi (f) + Taj
       Farid (m)
       Fahad (m)
       Zoya Fatima (f)
@@ -86,7 +86,7 @@ Kulsoom (f) + Husband
     Shahla Ahmad (f)
   Naeema (f) + Yahya
     Raju (m) + Sumbul
-    Bubli (f)
+    Bubli (m)
     Tasneem (f) + Irshad
       Ishaan (m)
       Raiyan (m)
