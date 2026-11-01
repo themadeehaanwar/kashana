@@ -5,7 +5,7 @@
 # "Name -> Other" = shows Name as a small link that jumps to Other (used when a couple belongs to two branches;
 #   list the children only once, under the main side).
 
-Kulsoom (f) + Husband
+Kulsoom (f) + Rafique (m)
   Shafique Ahmad (m) + Raziya Khatoon
     Farookh Ahmad (m) + Nikhat
       Nazneen (f) + Abrar
@@ -43,7 +43,7 @@ Kulsoom (f) + Husband
       Fouzan Hussain (m)
     Alia Ahmad (f) + Ali Ahmad
       Athar (m)
-      Suhan
+      Suhan (f)
     Amber Ahmad (f) + Sarfaraz
       Aryan (m)
       Zyan (m)
@@ -101,10 +101,10 @@ Kulsoom (f) + Husband
     Zeeshu (m) + Fatima
       Zoheb (m)
       Zyan (m)
-  Shaheen
+  Shaheen (f)
     Kashif (m) -> Aariz
     Anam (f)
-  Atti
+  Atti (f)
     Mahwish (f)
     Waqar (m)
     Ayesha (f)
